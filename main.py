@@ -9,12 +9,16 @@ def create_model(json):
     """
         Summary of function.
 
+        Description:
+        -----------------------
+        This function returns a model so the users can use to predict other data 
+
         Parameters (json file):
         ------------------------
-        model_type: string
-            Name of the chosen model
-        data : json
-            A json file that have features and targets as keys and a list of values as values
+        model: string
+            The type of model using
+        data : csv
+            A csv file that have features and targets as keys and a list of values as values
         target: list
             a list of targeted values that is needed to be predicted
         parameter: list
@@ -26,18 +30,31 @@ def create_model(json):
         model : scikit-learn model
             a model that can predict other unknown value
     """
-        
-    data = pd.read_json(json["data"])
-    target = json["target"]
-    parameter = pd.read_json(json["parameter"])
-    model_type =json["model_type"]
+    #TODO: implement the function 
 
-        
+def predict(json):
+    """
+        Summary of function.
 
-    model = Model(type=model_type, X_cols=list(set(data.columns)-set(target)), y_cols=target, parameter=parameter)
+        Description:
+        --------------------------------
+        Returns the prediction given a model and its data
 
-    return model
+        Parameters (json file):
+        ---------------------------------------
+        model: scikit-learn model
+            The chosen model used for predicting
+        data: csv
+            A file consists of features that needed to be predicted
+    
 
+        Returns (json file):
+        -----------------------------
+        prediction: csv file
+            The predicted value for the given data
+    """
+    #TODO: implement the function
+    
 
 if __name__ == "__main__":
     main()
