@@ -36,9 +36,8 @@ def train(data, X_cols, y_cols, type, sample_weight):
     elif type.lower() == "bernoulli naive bayes":
         model = BernoulliNB()
 
-    X_train, X_test, y_train, y_test = train_test_split(data[X_cols], data[y_cols], test_size=0.2, random_state=42)
 
-    model.fit(X_train, X_test, sample_weight=sample_weight)
+    model.fit(data[X_cols], data[y_cols], sample_weight=sample_weight)
 
     return model
 
