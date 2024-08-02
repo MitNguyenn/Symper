@@ -1,7 +1,8 @@
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
 from sklearn.model_selection import train_test_split 
+import pandas as pd
 
-def train(data, X_cols, y_cols, type, sample_weight):
+def train(data_path, X_cols, y_cols, type, sample_weight, alpha):
     """
         Summary of function.
 
@@ -11,8 +12,8 @@ def train(data, X_cols, y_cols, type, sample_weight):
 
         Parameters (json file):
         ------------------------
-        data : csv
-            A csv file that have features and targets as keys and a list of values as values
+        data_path : string
+            The file path to a csv fil containing the data
         X_cols: list
             List of the features of the data
         y_cols: list
@@ -21,6 +22,8 @@ def train(data, X_cols, y_cols, type, sample_weight):
             Type of Naive Bayes model
         sample_weight: list
             A list of weights for each features 
+        alpha: float/ int
+            A number to make training more stable
 
 
         Returns (json file):
@@ -29,12 +32,14 @@ def train(data, X_cols, y_cols, type, sample_weight):
             a model that can predict other unknown value
     """
 
+    data = pd.read_csv(data_path)
+
     if type.lower() == "gaussian naive bayes":
-        model = GaussianNB()
+        model = GaussianNB(var_smoothing=alpha)
     elif type.lower() == "multinomial naive bayes":
-        model = MultinomialNB()
+        model = MultinomialNB(alpha=alpha)
     elif type.lower() == "bernoulli naive bayes":
-        model = BernoulliNB()
+        model = BernoulliNB(alpha=alpha)
 
 
     model.fit(data[X_cols], data[y_cols], sample_weight=sample_weight)
