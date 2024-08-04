@@ -62,4 +62,5 @@ result = predict(data, model_name, target_name)
 # Output the results
 print(json.dumps(result, indent=2))
 
-# Will code the 
+# Haven't done the http request handling part
+
