@@ -25,11 +25,8 @@ def test(data, X_cols, y_cols):
         model : scikit-learn model
             a model that can predict other unknown value
     """
-    #TODO 1: data input
-    
-    
 
-    #TODO 2: TRAIN DATA 
+    #TODO 1: TRAIN DATA 
     
     X = data[X_cols]
     y = data[y_cols]
@@ -38,6 +35,6 @@ def test(data, X_cols, y_cols):
     model = linear_model.LinearRegression()
     model.fit(X_train, X_test)
 
-    #TODO 3: RETURN MODEL
+    #TODO 2: RETURN MODEL
     return model
 
