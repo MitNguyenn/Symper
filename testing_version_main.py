@@ -58,7 +58,8 @@ input_json = json.dumps({
 data = json.loads(input_json)
 model_name = data["model_name"]
 target_name = data["target_name"]
-result = predict(data, model_name, target_name)
+model_params = data["model_params"]
+result = predict(data, model_name, target_name, model_params)
 
 # Output the results
 print(json.dumps(result, indent=2))
