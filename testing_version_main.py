@@ -2,6 +2,11 @@ import json
 import numpy as np
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.naive_bayes import GaussianNB
+from flask import Flask, request, jsonify
+
+
+app = Flask(__name__)
+
 
 # Handle the data in csv file
 def parse_csv_data(csv_string):
@@ -11,7 +16,7 @@ def parse_csv_data(csv_string):
     return header, data
 
 # Model creation based on the model name
-def create_model(model_name):
+def create_model(model_name, model_params):
     if model_name == "linear_regression":
         return LinearRegression(**model_params)
     elif model_name == "logistic_regression":
@@ -34,35 +39,39 @@ def prepare_data(data, target_name, headers):
         X.append([float(row[i]) for i in range(len(row)) if i != target_index and i != id_index])
     return np.array(X), np.array(y), ids
 
-def predict(csv_data, model_name, target_name, model_params):
-    headers, rows = parse_csv_data(data["csv_data"])
-    X, y, ids = prepare_data(rows, target_name, headers)
-    model = create_model(model_name, model_params)
-    model.fit(X, y)
-    predictions = model.predict(X)
-    
-    # Map predictions to ids
-    results = [{"id": ids[i], "predicted_value": predictions[i]} for i in range(len(ids))]
-    
-    return {"predictions": results}
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        # Get the JSON data from the request
+        data = request.get_json()
+        
+        # Extract the necessary information
+        csv_data = data.get('csv_data')
+        model_name = data.get('model_name')
+        target_name = data.get('target_name')
+        model_params = data.get('model_params', {})
 
-# Example input JSON
-input_json = json.dumps({
-    "csv_data": "id,name,age,income,target\n1,John,30,40000,1\n2,Jane,25,50000,0\n3,Bob,35,45000,1",
-    "model_name": "logistic_regression",
-    "target_name": "target"
-    "model_params": {}
-})
+        if not csv_data or not model_name or not target_name:
+            return jsonify({"error": "Missing required fields"}), 400
 
-# API simulation
-data = json.loads(input_json)
-model_name = data["model_name"]
-target_name = data["target_name"]
-model_params = data["model_params"]
-result = predict(data, model_name, target_name, model_params)
+        # Parse the CSV data and prepare the dataset
+        headers, rows = parse_csv_data(csv_data)
+        X, y, ids = prepare_data(rows, target_name, headers)
 
-# Output the results
-print(json.dumps(result, indent=2))
+        # Create and train the model
+        model = create_model(model_name, model_params)
+        model.fit(X, y)
 
-# Haven't done the http request handling part
+        # Make predictions
+        predictions = model.predict(X)
+        results = [{"id": ids[i], "predicted_value": predictions[i]} for i in range(len(ids))]
 
+        # Return the results as a JSON response
+        return jsonify({"predictions": results})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Define and start the Flask app
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
