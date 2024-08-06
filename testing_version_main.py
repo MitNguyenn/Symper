@@ -37,7 +37,7 @@ def prepare_data(data, target_name, headers):
 def predict(csv_data, model_name, target_name, model_params):
     headers, rows = parse_csv_data(data["csv_data"])
     X, y, ids = prepare_data(rows, target_name, headers)
-    odel = create_model(model_name, model_params)
+    model = create_model(model_name, model_params)
     model.fit(X, y)
     predictions = model.predict(X)
     
