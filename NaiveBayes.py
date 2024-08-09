@@ -12,9 +12,9 @@ def train(data, X_cols, y_cols, type, sample_weight, alpha):
 
         Parameters (json file):
         ------------------------
-        data : csv
-            A csv fil containing the data
-        X_cols: list of string
+        data : pd.DataFrame
+            A DataFrame containing the data
+        X_cols: list
             List of the features of the data
         y_cols: list of string
             List of the targets of the data
@@ -31,8 +31,6 @@ def train(data, X_cols, y_cols, type, sample_weight, alpha):
         model : scikit-learn model
             a model that can predict other unknown value
     """
-
-    data = pd.DataFrame(data)
 
     if type.lower() == "gaussian naive bayes":
         model = GaussianNB(var_smoothing=alpha)
