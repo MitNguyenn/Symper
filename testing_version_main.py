@@ -28,6 +28,7 @@ def predict():
         feature_names = data.get('feature_names')
         model_params = data.get('model_params', {})
 
+        # Return error if there are any fields missing
         if not csv_data or not model_name or not target_name or not feature_names:
             return jsonify({"error": "Missing required fields"}), 400
 
@@ -45,8 +46,10 @@ def predict():
             results = [{"id": X_test.index[i], "predicted_value": predictions[i]} for i in range(len(X_test))]
 
         else:
+            # Return error if the model name is invalid
             return jsonify({"error": "Unsupported model type"}), 400
 
+        # Return results
         return jsonify({"predictions": results})
 
     except Exception as e:
