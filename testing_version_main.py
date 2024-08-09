@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 
 # Function to create Naive Bayes model
-def nb(data, feature_names, target_name, model_params):
+def nb(data, target_name, model_params):
     model_name = data.get('model_name')
     sample_weight = model_params.get('sample_weight', None)
     alpha = model_params.get('alpha', 1.0)
