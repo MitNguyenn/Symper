@@ -68,6 +68,7 @@ def train(data, target_columns, params):
     # Create the evaluation dictionary
     evaluation = {
         'accuracy': accuracy
+        'precision': precision
     }
     
     # Generate a unique ID for the model
