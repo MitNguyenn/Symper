@@ -75,6 +75,6 @@ def train(data, target_columns, params):
     model_id = str(uuid.uuid4())
     
     # Save the model to a file
-    joblib.dump(model, f"model_{model_id}.joblib")
+    joblib.dump(model, f"save/{model_id}.pkl")
     
     return model_id, evaluation
