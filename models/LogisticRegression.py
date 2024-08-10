@@ -38,11 +38,11 @@ def train(data, target_columns, params):
     """
 
     # Extract features and target from the data
-    X = data.drop(target_columns, axis=1)
-    y = data[target_columns].values.ravel()  # Flatten the array if it's a single target column
+    X = data.drop(target_columns)
+    y = data[target_columns].copy()
 
     # Split data into training and validation sets
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=params.get('test_size', 0.2))
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=params.get('test_size', 0.2))
 
     # Initialize the logistic regression model with the given parameters
     model = LogisticRegression(
@@ -56,10 +56,10 @@ def train(data, target_columns, params):
     model.fit(X_train, y_train)
     
     # Predict on the validation set
-    y_pred = model.predict(X_val)
+    y_pred = model.predict(X_test)
     
     # Calculate accuracy
-    accuracy = accuracy_score(y_val, y_pred)
+    accuracy = accuracy_score(y_test, y_pred)
     
     # Create the evaluation dictionary
     evaluation = {
