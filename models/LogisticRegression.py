@@ -37,4 +37,39 @@ def train(data, target_columns, params):
             
     """
 
-    return 0
+    # Extract features and target from the data
+    X = data.drop(target_columns, axis=1)
+    y = data[target_columns].values.ravel()  # Flatten the array if it's a single target column
+
+    # Split data into training and validation sets
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=params.get('test_size', 0.2))
+
+    # Initialize the logistic regression model with the given parameters
+    model = LogisticRegression(
+        penalty=params.get('penalty', 'l2'),
+        tol=params.get('tol', 1e-4),
+        C=params.get('C', 1.0),
+        fit_intercept=params.get('fit_intercept', True)
+    )
+    
+    # Train the model
+    model.fit(X_train, y_train)
+    
+    # Predict on the validation set
+    y_pred = model.predict(X_val)
+    
+    # Calculate accuracy
+    accuracy = accuracy_score(y_val, y_pred)
+    
+    # Create the evaluation dictionary
+    evaluation = {
+        'accuracy': accuracy
+    }
+    
+    # Generate a unique ID for the model
+    model_id = str(uuid.uuid4())
+    
+    # Save the model to a file
+    joblib.dump(model, f"model_{model_id}.joblib")
+    
+    return model_id, evaluation
