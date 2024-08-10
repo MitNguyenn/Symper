@@ -1,6 +1,9 @@
-from sklearn.model_selection import train_test_split
+import pandas as pd
 from sklearn.linear_model import LogisticRegression
-
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, precision_score
+import uuid
+import joblib
 def train(data, target_columns, params):
     """
         Summary of function.
@@ -60,6 +63,7 @@ def train(data, target_columns, params):
     
     # Calculate accuracy
     accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
     
     # Create the evaluation dictionary
     evaluation = {
