@@ -24,10 +24,10 @@ def train(data, target_columns, params):
                 Weather to set bias to always be positive or not
         
 
-        Returns (json file):
+        Returns (json):
         -------------------------
-        model : sklearn.linear_model._base.LinearRegression
-            a model that can predict other unknown value
+        model : string
+            The id of a model that can predict other unknown value
         evaluation: dictionary
             MSE:
                 Mean Squared Error loss of the model. The smaller, the better

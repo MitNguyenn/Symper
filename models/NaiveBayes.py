@@ -32,8 +32,8 @@ def train(data, target_columns, params):
 
         Returns (json file):
         -------------------------
-        model : sklearn.linear_model._base.LinearRegression
-            a model that can predict other unknown value
+        model : string
+            The id of the model that can predict other unknown value
         evaluation: dictionary
             accuracy: float
                 The accuracy of the model

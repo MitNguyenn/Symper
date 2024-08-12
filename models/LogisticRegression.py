@@ -32,11 +32,13 @@ def train(data, target_columns, params):
 
         Returns (json file):
         -------------------------
-        model : sklearn.linear_model._base.LinearRegression
-            a model that can predict other unknown value
+        model : string
+            The id of a model that can predict other unknown value
         evaluation: dictionary
             accuracy:
                 The accuracy of the model
+            precision:
+                The precision of the model
             
     """
 
@@ -67,7 +69,7 @@ def train(data, target_columns, params):
     
     # Create the evaluation dictionary
     evaluation = {
-        'accuracy': accuracy
+        'accuracy': accuracy,
         'precision': precision
     }
     
