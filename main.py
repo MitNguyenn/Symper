@@ -104,6 +104,19 @@ def trainLinearRegression():
                     Mean Squared Error loss of the model. The smaller, the better
 
     """
+    df, model_id = predict_preprocessing(request)
+
+    targets = request.json.get('targets')
+    parameters = request.json.get('parameters')
+
+    if not targets or not parameters:
+        return jsonify({"error": "Missing targets or parameters in the request"}), 400
+    
+    X = df.drop(columns=targets)
+    y = df[targets]
+
+    test_size = parameters.get('test_size', 0.2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
     #TODO: Ni Tran
     
