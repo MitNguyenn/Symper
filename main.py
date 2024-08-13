@@ -97,7 +97,7 @@ def trainLinearRegression():
                 Weather to set bias to always be positive or not
 
         Returns (json):
-            model : string
+            model_id : string
                 The id of a model that can predict other unknown value
             evaluation: dictionary
                 MSE:
@@ -117,6 +117,16 @@ def trainLinearRegression():
 
     test_size = parameters.get('test_size', 0.2)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
+    
+    model = joblib.load(f"models/{model_id}.pkl")
+    predictions = model.predict(X_test)
+    mse = mean_squared_error(y_test, predictions)
+
+    return jsonify({
+        "model": model_id,
+        "evaluation": {
+            "MSE": mse
+        }
 
     #TODO: Ni Tran
     
