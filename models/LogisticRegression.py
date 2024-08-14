@@ -7,40 +7,39 @@ import joblib
 
 def train(data, target_columns, params):
     """
-        Summary of function.
- 
+        Summary of the function.
+    
         Description:
         -----------------------
-        This function returns a model so the users can use to predict other data
- 
-        Parameters (json file):
+        This function returns a model that users can utilize to predict other data.
+    
+        Parameters (JSON file):
         ------------------------
         data: pd.DataFrame
-            A DataFrame consists of float/int
+            A DataFrame consisting of floats/integers.
         target_columns: array
-            An array of string containing the target names 
+            An array of strings containing the target names.
         params: dictionary
             test_size: float (between 0 and 1)
-                The percentage of validation data taken from the data
-            penalty="l2": string ("l1", "l2", "elasticnet", "None")
-                The normalization of the penalty
-            tol=1e-4: float 
-                Tolerance for stopping criteria
-            C=1.0: float (must be positive)
-                Inverse of regularization strength: The smaller the number, the stronger the regularization
-            fit_intercept=True: bool
-                Whether to have bias in the model or not 
+                The percentage of data used for validation.
+            penalty: string, optional (default="l2") ("l1", "l2", "elasticnet", "None")
+                The type of regularization penalty to apply.
+            tol: float, optional (default=1e-4)
+                Tolerance for stopping criteria.
+            C: float, optional (default=1.0, must be positive)
+                Inverse of regularization strength: A smaller value indicates stronger regularization.
+            fit_intercept: bool, optional (default=True)
+                Whether to include an intercept in the model.
 
-        Returns (json file):
+        Returns:
         -------------------------
-        model : string
-            The id of a model that can predict other unknown value
+        model: string
+            The ID of the model that can predict other unknown values.
         evaluation: dictionary
-            accuracy:
-                The accuracy of the model
-            precision:
-                The precision of the model
-            
+            accuracy: float
+                The accuracy of the model.
+            precision: float
+                The precision of the model.
     """
 
     X = data.drop(target_columns)

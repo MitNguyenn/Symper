@@ -8,40 +8,39 @@ from sklearn.externals import joblib
 
 def train(data, target_columns, params):
     """
-        Summary of function.
+        Summary of the function.
 
         Description:
         -----------------------
-        This function returns a model so the users can use to predict other data 
-
-        Parameters (json file):
+        This function returns a model that users can utilize to predict other data.
+    
+        Parameters (JSON file):
         ------------------------
         data: pd.DataFrame
-            A DataFrame consists of float/int
+            A DataFrame consisting of floats/integers.
         target_columns: array
-            An array of string containing the target names 
+            An array of strings containing the target names.
         params: dictionary
             test_size: float (between 0 and 1)
-                The percentage of validation data taken from the data
+                The percentage of validation data taken from the data.
             model_type: string (gaussian/multinomial/bernoulli)
-                Type of Naive Bayes model used
-            priors=None: array (Shape = target.shape)
-                Prior probabilities of the classes
-            alpha=1e-9: float
-                A number create stability for calculating
+                The type of Naive Bayes model to be used.
+            priors: array, optional (default=None) (shape = target.shape)
+                Prior probabilities of the classes.
+            alpha: float, optional (default=1e-9)
+                A smoothing parameter to create stability for calculations.
 
-
-        Returns (json file):
+        Returns:
         -------------------------
-        model_id : string
-            The id of the model that can predict other unknown value
+        model_id: string
+            The ID of the model that can predict other unknown values.
         evaluation: dictionary
             accuracy: float
-                The accuracy of the model
+                The accuracy of the model.
             precision: float
-                The preciion of model
-
+                The precision of the model.
     """
+    
     test_size = params["test_size"]
     type = params["model_type"]
     alpha = params["alpha"]
