@@ -1,6 +1,7 @@
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
 from sklearn.model_selection import train_test_split 
 from sklearn.metrics import accuracy_score, precision_score
+
 import uuid
 from sklearn.externals import joblib
 

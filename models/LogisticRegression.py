@@ -1,9 +1,10 @@
-import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score
+
 import uuid
 import joblib
+
 def train(data, target_columns, params):
     """
         Summary of function.
@@ -28,7 +29,7 @@ def train(data, target_columns, params):
             C=1.0: float (must be positive)
                 Inverse of regularization strength: The smaller the number, the stronger the regularization
             fit_intercept=True: bool
-                Weather to have bias in the model or not 
+                Whether to have bias in the model or not 
 
         Returns (json file):
         -------------------------

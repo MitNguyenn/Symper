@@ -19,9 +19,9 @@ def train(data, target_columns, params):
             test_size: float (between 0 and 1)
                 The percentage of validation data taken from the data
             fit_intercept=True: bool
-                Weather to have bias in the model or not
+                Whether to have bias in the model or not
             positive=True: bool
-                Weather to set bias to always be positive or not
+                Whether to set bias to always be positive or not
         
 
         Returns (json):
