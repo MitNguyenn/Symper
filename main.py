@@ -25,23 +25,19 @@ def train_preprocessing(request):
         parameters: dictionary
             test_size: float (between 0 and 1)
                 The percentage of validation data taken from the data
-            fit_intercept=True: bool
-                Weather to have bias in the model or not
-            positive=True: bool
-                Weather to set bias to always be positive or not
+            etc. (Every parameter that the model need)
 
         Returns (json):
-            data: pd.DataFrame
-                converted data into form of pd.DataFrame
-            targets: np.array
-                Converted targets columns into np.array
-                    parameters: dictionary
+        ---------------------------------------
+        data: pd.DataFrame
+            converted data into form of pd.DataFrame
+        targets: np.array
+            Converted targets columns into np.array
+                parameters: dictionary
+        parameters: dictionary
             test_size: float (between 0 and 1)
                 The percentage of validation data taken from the data
-            fit_intercept=True: bool
-                Weather to have bias in the model or not
-            positive=True: bool
-                Weather to set bias to always be positive or not            
+            etc. (Every parameter that the model need)
     """
 
 
@@ -165,7 +161,18 @@ def trainNaiveBayes():
                 precision: float
                     The preciion of model
     """
-    #TODO: Ni Tran
+    
+    data, targets, parameters = train_preprocessing(request)
+
+    model_id, evaluation = train_naive_bayes(data, targets, parameters)
+
+    return jsonify({
+        "model_id": model_id,
+        "evaluation": {
+            "accuracy": evaluation["accuracy"],
+            "precision" : evaluation["precision"]
+            }
+        })
 
 
 @app.route('/train/logistics_regression', methods=['POST'])

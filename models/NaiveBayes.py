@@ -32,7 +32,7 @@ def train(data, target_columns, params):
 
         Returns (json file):
         -------------------------
-        model : string
+        model_id : string
             The id of the model that can predict other unknown value
         evaluation: dictionary
             accuracy: float
