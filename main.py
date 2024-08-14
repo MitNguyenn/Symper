@@ -214,7 +214,7 @@ def trainLogisticsRegression():
     
 
 @app.route('/predict', methods=['POST'])
-def predict(request):
+def predict():
     """
         Summary of API
 
@@ -255,7 +255,8 @@ def predict(request):
 
     return jsonify({
         "prediction": prediction
-        )}
+    })
+    
     #TODO: Ni Tran
     
 
