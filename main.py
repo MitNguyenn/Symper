@@ -100,29 +100,16 @@ def trainLinearRegression():
                     Mean Squared Error loss of the model. The smaller, the better
 
     """
-    df, model_id = predict_preprocessing(request)
+    data, targets, parameters = train_preprocessing(request)
 
-    targets = request.json.get('targets')
-    parameters = request.json.get('parameters')
-
-    if not targets or not parameters:
-        return jsonify({"error": "Missing targets or parameters in the request"}), 400
-    
-    X = df.drop(columns=targets)
-    y = df[targets]
-
-    test_size = parameters.get('test_size', 0.2)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
-    
-    model = joblib.load(f"models/{model_id}.pkl")
-    predictions = model.train_linear_regression(X_test, targets, parameters)
-    mse = mean_squared_error(y_test, predictions)
+    model_id, evaluation = train_linear_regression(data, targets, parameters)
 
     return jsonify({
-        "model": model_id,
+        "model_id": model_id,
         "evaluation": {
-            "MSE": mse
-        }
+            "MSE": evaluation["MSE"]
+            }
+        })
 
     #TODO: Ni Tran
     
@@ -212,6 +199,17 @@ def trainLogisticsRegression():
                 precision: 
                     The preciion of the model
     """
+     data, targets, parameters = train_preprocessing(request)
+
+    model_id, evaluation = train_logistic_regression(data, targets, parameters)
+
+    return jsonify({
+        "model_id": model_id,
+        "evaluation": {
+            "accuracy": evaluation["accuracy"],
+            "precision" : evaluation["precision"]
+            }
+        })
     
 
 @app.route('/predict', methods=['POST'])
