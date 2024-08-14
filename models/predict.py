@@ -8,14 +8,14 @@ def predict(X, model_id):
         -----------------------
         Return the prediction
 
-        Parameters (json file):
+        Parameters:
         ------------------------
         X: pd.DataFrame
             A DataFrame containing the X data needed to be predicted
         model_id
             The model_id to get the model
 
-        Returns (json file):
+        Returns:
         -------------------------
         y: pd.DataFrame
             The prediction of the model
