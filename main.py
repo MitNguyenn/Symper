@@ -119,7 +119,7 @@ def trainLinearRegression():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
     
     model = joblib.load(f"models/{model_id}.pkl")
-    predictions = model.predict(X_test)
+    predictions = model.train_linear_regression(X_test, targets, parameters)
     mse = mean_squared_error(y_test, predictions)
 
     return jsonify({
