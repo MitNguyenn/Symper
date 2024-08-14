@@ -3,6 +3,7 @@ import pandas as pd
 from models.NaiveBayes import train as train_naive_bayes
 from models.LinearRegression import train as train_linear_regression
 from models.LogisticRegression import train as train_logistic_regression
+from models.predict import predict as pred
 import uuid
 
 app = Flask(__name__)
@@ -199,7 +200,7 @@ def trainLogisticsRegression():
                 precision: 
                     The preciion of the model
     """
-     data, targets, parameters = train_preprocessing(request)
+    data, targets, parameters = train_preprocessing(request)
 
     model_id, evaluation = train_logistic_regression(data, targets, parameters)
 
@@ -213,7 +214,7 @@ def trainLogisticsRegression():
     
 
 @app.route('/predict', methods=['POST'])
-def predict():
+def predict(request):
     """
         Summary of API
 
@@ -241,6 +242,20 @@ def predict():
 
 
     """
+    data, model_id = predict_preprocessing(request)
+
+    columns = data[0]
+    rows = data[1:]
+
+    df = pd.DataFrame(rows, columns=columns)
+    
+    df_prediction = pred(df, model_id)
+
+    prediction = [df_prediction.columns.tolist()] + df_prediction.values.tolist()
+
+    return jsonify({
+        "prediction": prediction
+        )}
     #TODO: Ni Tran
     
 
