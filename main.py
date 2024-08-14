@@ -205,6 +205,20 @@ def trainLogisticsRegression():
                 precision: 
                     The preciion of the model
     """
+    
+    json_data = request.get_json()
+
+    data = pd.DataFrame(json_data['data'])
+    targets = json_data['targets']
+    params = json_data['params']
+
+    model_id, evaluation = train_logistic_regression(data, targets, params)
+
+    return jsonify({
+        "model": model_id,
+        "evaluation": evaluation
+    })
+
 
     #TODO: Ni Tran
     
