@@ -42,14 +42,11 @@ def train(data, target_columns, params):
             
     """
 
-    # Extract features and target from the data
     X = data.drop(target_columns)
     y = data[target_columns].copy()
 
-    # Split data into training and validation sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=params.get('test_size', 0.2))
 
-    # Initialize the logistic regression model with the given parameters
     model = LogisticRegression(
         penalty=params.get('penalty', 'l2'),
         tol=params.get('tol', 1e-4),
@@ -57,26 +54,20 @@ def train(data, target_columns, params):
         fit_intercept=params.get('fit_intercept', True)
     )
     
-    # Train the model
     model.fit(X_train, y_train)
     
-    # Predict on the validation set
     y_pred = model.predict(X_test)
     
-    # Calculate accuracy
     accuracy = accuracy_score(y_test, y_pred)
     precision = precision_score(y_test, y_pred)
     
-    # Create the evaluation dictionary
     evaluation = {
         'accuracy': accuracy,
         'precision': precision
     }
     
-    # Generate a unique ID for the model
     model_id = str(uuid.uuid4())
     
-    # Save the model to a file
     joblib.dump(model, f"save/{model_id}.pkl")
     
     return model_id, evaluation

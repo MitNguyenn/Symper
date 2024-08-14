@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify
+
 import pandas as pd
+import numpy as np
+
 from models.NaiveBayes import train as train_naive_bayes
 from models.LinearRegression import train as train_linear_regression
 from models.LogisticRegression import train as train_logistic_regression
 from models.predict import predict as pred
-import uuid
 
 app = Flask(__name__)
 
@@ -28,7 +30,7 @@ def train_preprocessing(request):
                 The percentage of validation data taken from the data
             etc. (Every parameter that the model need)
 
-        Returns (json):
+        Returns:
         ---------------------------------------
         data: pd.DataFrame
             converted data into form of pd.DataFrame
@@ -41,10 +43,19 @@ def train_preprocessing(request):
             etc. (Every parameter that the model need)
     """
 
+    input_data = np.array(request.get_json())
+    data = input_data['data']
+    target = input_data['target']
+    parameters = input_data['parameters']
+
+    df = pd.DataFrame(data[1:], columns=data[0])
+    df.reset_index(drop=True, inplace=True)
+    return df, target, parameters
+
 
 def predict_preprocessing(request):
     """
-        Summary of API
+        Summary of function
 
         Parameters (request):
         ------------------------------------------
@@ -58,7 +69,7 @@ def predict_preprocessing(request):
         model_id: string
             The id of the model
 
-        Returns (json):
+        Returns:
         ------------------------------------------
         data: pd.DataFrame
             converted data into form of pd.DataFrame
@@ -66,8 +77,14 @@ def predict_preprocessing(request):
             The id of the model
     """
 
+    input_data = np.array(request.get_json())
+    data = input_data['data']
+    model_id = input_data['model_id']
 
-    #TODO: Mit
+    df = pd.DataFrame(data[1:], columns=data[0])
+    df.reset_index(drop=True, inplace=True)
+    return df, model_id
+
 
 @app.route('/train/linear_regression', methods=['POST'])
 def trainLinearRegression():
@@ -112,7 +129,6 @@ def trainLinearRegression():
             }
         })
 
-    #TODO: Ni Tran
     
 @app.route('/train/naive_bayes', methods=['POST'])
 def trainNaiveBayes():
@@ -214,7 +230,7 @@ def trainLogisticsRegression():
     
 
 @app.route('/predict', methods=['POST'])
-def predict(request):
+def predict():
     """
         Summary of API
 
@@ -248,6 +264,7 @@ def predict(request):
     rows = data[1:]
 
     df = pd.DataFrame(rows, columns=columns)
+    df = df.reset_index(drop=True)
     
     df_prediction = pred(df, model_id)
 
