@@ -255,8 +255,7 @@ def predict(request):
 
     return jsonify({
         "prediction": prediction
-        )}
-    #TODO: Ni Tran
+        })
     
 
 if __name__ == '__main__':
