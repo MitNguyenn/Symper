@@ -21,11 +21,11 @@ def predict(X, model_id):
             A DataFrame containing the predictions made by the model.
     """
 
-    model = joblib.load(f"save/{model_id}")
+    model = joblib.load(f"save/{model_id}.pkl")
     try:
         y = model.predict(X)
         return y
     except Exception:
-        print("Incorrect model or Invalid model")
+        return("Incorrect model or Invalid model")
 
     return 0
