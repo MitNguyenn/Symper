@@ -41,9 +41,9 @@ def train(data, target_columns, params):
                 The precision of the model.
     """
     
-    test_size = params["test_size"]
-    type = params["model_type"]
-    alpha = params["alpha"]
+    test_size = params.get('test_size', 0.2)
+    type = params.get('type')
+    alpha = params.get('alpha', 1e-9)
 
 
     X = data.drop(columns=target_columns)
