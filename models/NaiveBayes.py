@@ -52,9 +52,9 @@ def train(data, target_columns, params):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
     if type.lower() == "gaussian":
-        model = GaussianNB(var_smoothing=alpha, priors=None)
+        model = GaussianNB(var_smoothing=alpha, params.get('priors', None))
     elif type.lower() == "multinomial":
-        model = MultinomialNB(alpha=alpha, priors=None)
+        model = MultinomialNB(alpha=alpha, params.get('priors', None))
     elif type.lower() == "bernoulli":
         model = BernoulliNB(alpha=alpha)
 
