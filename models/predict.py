@@ -1,4 +1,4 @@
-from sklearn.externals import joblib
+import joblib
 
 def predict(X, model_id):
     """
@@ -20,12 +20,17 @@ def predict(X, model_id):
         y: pd.DataFrame
             A DataFrame containing the predictions made by the model.
     """
-
-    model = joblib.load(f"save/{model_id}.pkl")
     try:
+        model = joblib.load(f"save/{model_id}.pkl")
+        columns = model_id.split("`~")[0][1:-1]
+        columns = columns.replace("'", "").split(", ")
         y = model.predict(X)
+
+        y = y.tolist()
+        y.insert(0, columns)
         return y
+    except FileNotFoundError:
+        raise FileNotFoundError("No such model ID")
     except Exception:
         return("Incorrect model or Invalid model")
 
-    return 0

@@ -1,9 +1,11 @@
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, precision_score
+import os
 
 import uuid
 import joblib
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, precision_score
 
 def train(data, target_columns, params):
     """
@@ -13,7 +15,7 @@ def train(data, target_columns, params):
         -----------------------
         This function returns a model that users can utilize to predict other data.
     
-        Parameters (JSON file):
+        Parameters:
         ------------------------
         data: pd.DataFrame
             A DataFrame consisting of floats/integers.
@@ -42,10 +44,10 @@ def train(data, target_columns, params):
                 The precision of the model.
     """
 
-    X = data.drop(target_columns)
+    X = data.drop(columns=target_columns)
     y = data[target_columns].copy()
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=params.get('test_size', 0.2))
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=params['test_size'])
 
     model = LogisticRegression(
         penalty=params.get('penalty', 'l2'),
@@ -67,7 +69,8 @@ def train(data, target_columns, params):
     }
     
     model_id = str(uuid.uuid4())
-    
-    joblib.dump(model, f"save/{model_id}.pkl")
+    if not os.path.exists("save"):
+        os.makedirs("save")
+    joblib.dump(model, f"save/{y.columns.to_list()}`~{model_id}.pkl")
     
     return model_id, evaluation

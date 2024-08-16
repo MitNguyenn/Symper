@@ -40,10 +40,13 @@ def train_preprocessing(request):
             A dictionary containing the parameters used for the model.
     """
 
-    input_data = np.array(request.get_json())
-    data = input_data['data']
-    target = input_data['target']
-    parameters = input_data['parameters']
+    input_data = request.get_json()
+    try:
+        data = input_data['data']
+        target = input_data['target']
+        parameters = input_data['parameters']
+    except KeyError:
+        raise KeyError("Request is missing parameters")
 
     df = pd.DataFrame(data[1:], columns=data[0])
     df.reset_index(drop=True, inplace=True)
@@ -74,9 +77,12 @@ def predict_preprocessing(request):
             The ID of the model.
     """
 
-    input_data = np.array(request.get_json())
-    data = input_data['data']
-    model_id = input_data['model_id']
+    input_data = request.get_json()
+    try:
+        data = input_data['data']
+        model_id = input_data['model_id']
+    except KeyError:
+        raise KeyError("Request is missing parameters")
 
     df = pd.DataFrame(data[1:], columns=data[0])
     df.reset_index(drop=True, inplace=True)
@@ -115,12 +121,46 @@ def trainLinearRegression():
             MSE: float
                 Mean Squared Error loss of the model. The smaller, the better.
     """
+    error = False
+    try:
+        data, targets, parameters = train_preprocessing(request)
+    except ValueError as e:
+        message = f"Value Error {e}"
+        error = True
+    except KeyError as e:
+        message = f"Key Error: {e}"
+        error = True
+    except Exception as e:
+        message =  f"An unexpected error occurred: {e}"
+        error = True
 
-    data, targets, parameters = train_preprocessing(request)
 
-    model_id, evaluation = train_linear_regression(data, targets, parameters)
+    try:
+        model_id, evaluation = train_linear_regression(data, targets, parameters)
+    except ValueError as e:
+        if "could not convert string to float:" in str(e):
+            message =  "Value Error: Invalid data type in data, data should only contain float/int"
+        else:
+            message =  f"Value Error: {e}"
+        error = True
+    except KeyError as e:
+        message =  f"Key Error: {e}"
+        error = True
+    except Exception as e:
+        message =  f"An unexpected error occurred: {e}"
+        error = True
+
+    if error:
+        return jsonify({
+                    "status" : "error",
+                    "message" : message,
+                    "code" : 400
+                })
 
     return jsonify({
+        "status" : "OK",
+        "message" : "Data retrieved successfully",
+        "code" : 200,
         "model_id": model_id,
         "evaluation": {
             "MSE": evaluation["MSE"]
@@ -165,11 +205,48 @@ def trainNaiveBayes():
                 The precision of the model.
     """
     
-    data, targets, parameters = train_preprocessing(request)
+    error = False
+    try:
+        data, targets, parameters = train_preprocessing(request)
+    except ValueError as e:
+        message = f"Value Error {e}"
+        error = True
+    except KeyError as e:
+        message = f"Key Error: {e}"
+        error = True
+    except Exception as e:
+        message =  f"An unexpected error occurred: {e}"
+        error = True
 
-    model_id, evaluation = train_naive_bayes(data, targets, parameters)
+
+    try:
+        model_id, evaluation = train_naive_bayes(data, targets, parameters)
+    except ValueError as e:
+        if "could not convert string to float:" in str(e):
+            message = "Value Error: Invalid data type in data, data should only contain float/int"
+            error = True
+        else:
+            message = f"Value Error: {e}"
+            error = True
+    except KeyError as e:
+        message = f"Key Error: {e}"
+        error = True
+    except Exception as e:
+        message =  f"An unexpected error occurred: {e}"
+        error = True
+
+
+    if error:
+        return jsonify({
+                    "status" : "error",
+                    "message" : message,
+                    "code" : 400
+                })
 
     return jsonify({
+        "status" : "OK",
+        "message" : "Data retrieved successfully",
+        "code" : 200,
         "model_id": model_id,
         "evaluation": {
             "accuracy": evaluation["accuracy"],
@@ -216,12 +293,47 @@ def trainLogisticsRegression():
             precision: float
                 The precision of the model.
     """
+    error = False
+    try:
+        data, targets, parameters = train_preprocessing(request)
+    except ValueError as e:
+        message = f"Value Error {e}"
+        error = True
+    except KeyError as e:
+        message = f"Key Error: {e}"
+        error = True
+    except Exception as e:
+        message =  f"An unexpected error occurred: {e}"
+        error = True
 
-    data, targets, parameters = train_preprocessing(request)
+    try:
+        model_id, evaluation = train_logistic_regression(data, targets, parameters)
+    except ValueError as e:
+        if "could not convert string to float:" in str(e):
+            message =  "Value Error: Invalid data type in data, data should only contain float/int"
+            error = True
+        else:
+            message = f"Value Error: {e}"
+            error = True
+    except KeyError as e:
+        error = True
+        message = f"Key Error: {e}"
+    except Exception as e:
+        message =  f"An unexpected error occurred: {e}"
+        error = True
 
-    model_id, evaluation = train_logistic_regression(data, targets, parameters)
+    
+    if error:
+        return jsonify({
+                    "status" : "error",
+                    "message" : message,
+                    "code" : 400
+                })
 
     return jsonify({
+        "status" : "OK",
+        "message" : "Data retrieved successfully",
+        "code" : 200,
         "model_id": model_id,
         "evaluation": {
             "accuracy": evaluation["accuracy"],
@@ -258,24 +370,47 @@ def predict():
                 ...
             ]
     """
+    error = False
 
-    data, model_id = predict_preprocessing(request)
+    try:
+        df, model_id = predict_preprocessing(request)
+    except ValueError as e:
+        message = f"Value Error {e}"
+        error = True
+    except KeyError as e:
+        message = f"Key Error: {e}"
+        error = True
+    except Exception as e:
+        message = f"An unexpected error occurred: {e}"
+        error = True
 
-    columns = data[0]
-    rows = data[1:]
-
-    df = pd.DataFrame(rows, columns=columns)
-    df = df.reset_index(drop=True)
+    try:
+        df_prediction = pred(df, model_id)
+    except FileNotFoundError as e:
+        message = f"File Not Found Error: {e}"
+        error = True
+    except ValueError as e:
+        message = f"Value Error: {e}"
+        error = True
+    except KeyError as e:
+        message = f"Key Error: {e}"
+        error = True
     
-    df_prediction = pred(df, model_id)
+    if error:
+        return jsonify({
+            "status" : "error",
+            "message" : message,
+            "code" : 400,
+            })
 
-    prediction = [df_prediction.columns.tolist()] + df_prediction.values.tolist()
 
     return jsonify({
-        "prediction": prediction
+        "status" : "OK",
+        "message" : "Data retrieved successfully",
+        "code" : 200,
+        "prediction": df_prediction
         })
  
 if __name__ == '__main__':
-
     app.run(debug=True, port=5000)
 

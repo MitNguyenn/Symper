@@ -1,9 +1,13 @@
+import os
+
+import uuid
+import joblib
+import pandas as pd
+
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
-import uuid
-import joblib
 
 def train(data, target_columns, params):
     """
@@ -13,7 +17,7 @@ def train(data, target_columns, params):
         -----------------------
         This function returns a model that users can utilize to predict other data.
     
-        Parameters (JSON file):
+        Parameters:
         ------------------------
         data: pd.DataFrame
             A DataFrame consisting of floats/integers.
@@ -38,8 +42,7 @@ def train(data, target_columns, params):
 
     X = data.drop(columns=target_columns)
     y = data[target_columns].copy()
-    test_size = params.get('test_size', 0.2)
-
+    test_size = params["test_size"]
 
     model = LinearRegression(fit_intercept = params.get('fit_intercept', True), positive = params.get('positive', True))
 
@@ -47,12 +50,14 @@ def train(data, target_columns, params):
 
     model.fit(X_train, y_train)
 
-    mse = mean_squared_error(X_test, y_test)
+    mse = mean_squared_error(model.predict(X_test), y_test)
 
     evaluation = {}
     evaluation['mse'] = mse
 
     model_id = str(uuid.uuid4())
-    joblib.dump(model, f"save/{model_id}.pkl")
+    if not os.path.exists("save"):
+        os.makedirs("save")
+    joblib.dump(model, f"save/{y.columns.to_list()}`~{model_id}.pkl")
 
     return model_id, evaluation
