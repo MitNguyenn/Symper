@@ -135,7 +135,6 @@ def test_predict_preprocessing():
     except Exception as e:
         print("An unexpected error occurred: ", e)
 
-def test_predict():
     print("TEST PREDICT\n")
     data = pd.DataFrame({
         "Feature1": [1.2, 2.3, 3.4, 4.5, 5.6],
@@ -159,4 +158,3 @@ test_train_preprocessing()
 test_predict_preprocessing()
 test_logistic_regression()
 test_naive_bayes()
-test_predict()

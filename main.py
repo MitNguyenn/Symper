@@ -18,13 +18,13 @@ def train_preprocessing(request):
         data: array of float/int
             In the form of:
             [
-                [col1, col2, col3, col4, col5, ...], 
+                [column1, column2, column3, column4, column5, ...], 
                 [x1_0, x2_0, x3_0, x4_0, x5_0, ...], 
                 [x1_1, x2_1, x3_1, x4_1, x5_1, ...],
                 ...
             ]
         targets: array
-            An array of strings representing the target columns. Example: [col6, col7]
+            An array of strings representing the target columns. Example: [column6, column7]
         parameters: dictionary
             test_size: float (between 0 and 1)
                 The percentage of data used for validation.
@@ -61,7 +61,7 @@ def predict_preprocessing(request):
         data: array of float/int
             In the form of:
             [
-                [col1, col2, col3, col4, col5, ...], 
+                [column1, column2, column3, column4, column5, ...], 
                 [x1_0, x2_0, x3_0, x4_0, x5_0, ...], 
                 [x1_1, x2_1, x3_1, x4_1, x5_1, ...],
                 ...
@@ -91,36 +91,45 @@ def predict_preprocessing(request):
 @app.route('/train/linear_regression', methods=['POST'])
 def trainLinearRegression():
     """
-        Summary of API
+    **Trains a Linear Regression model and evaluates its performance.**
 
-        Parameters (request):
-        ------------------------------------------
-        data: array of float/int
+    Description:
+        This function trains a Linear Regression model using the provided data, targets, and hyperparameters. 
+        It then evaluates the model's performance and returns the model's ID along with key metrics.
+
+    ## Parameters (request):
+        `data` (List[List[Union[float, int, str]]]): 
             In the form of:
             [
-                [col1, col2, col3, col4, col5, ...], 
-                [x1_0, x2_0, x3_0, x4_0, x5_0, ...], 
-                [x1_1, x2_1, x3_1, x4_1, x5_1, ...],
+                [column1, column2, column3, column4, column5, ...],\n
+                [x1_0, x2_0, x3_0, x4_0, x5_0, ...],\n
+                [x1_1, x2_1, x3_1, x4_1, x5_1, ...],\n
                 ...
             ]
-        targets: array
-            An array of strings representing the target columns. Example: [col6, col7]
-        parameters: dictionary
-            test_size: float (between 0 and 1)
-                The percentage of data used for validation.
-            fit_intercept: bool, optional (default=True)
+        `targets` (List[str]): 
+            An array of strings representing the target columns. Example: ['column4', 'column5']
+        `parameters` (dictionary): 
+            A dictionary of hyperparameters for model training, with the following possible keys:
+
+            - `test_size` (float): 
+                The percentage of data to be used for validation. Must be between 0 and 1.
+            - `fit_intercept` (bool, optional, default=True): 
                 Whether to include an intercept (bias) in the model.
-            positive: bool, optional (default=True)
+            - `positive` (bool, optional, default=True): 
                 Whether to constrain the model's coefficients to be positive.
 
-        Returns (JSON):
-        ------------------------------------------
-        model_id: string
+    ## Returns (JSON):
+        model_id (string): 
             The ID of the model that can predict other unknown values.
-        evaluation: dictionary
-            MSE: float
-                Mean Squared Error loss of the model. The smaller, the better.
+
+        evaluation (dictionary): 
+            A dictionary containing performance metrics of the model:
+
+            - `MSE` (float): 
+                The Mean Squared Error loss of the model. A lower value indicates a better model.
     """
+
+    
     error = False
     try:
         data, targets, parameters = train_preprocessing(request)
@@ -134,21 +143,21 @@ def trainLinearRegression():
         message =  f"An unexpected error occurred: {e}"
         error = True
 
-
-    try:
-        model_id, evaluation = train_linear_regression(data, targets, parameters)
-    except ValueError as e:
-        if "could not convert string to float:" in str(e):
-            message =  "Value Error: Invalid data type in data, data should only contain float/int"
-        else:
-            message =  f"Value Error: {e}"
-        error = True
-    except KeyError as e:
-        message =  f"Key Error: {e}"
-        error = True
-    except Exception as e:
-        message =  f"An unexpected error occurred: {e}"
-        error = True
+    if not error:
+        try:
+            model_id, evaluation = train_linear_regression(data, targets, parameters)
+        except ValueError as e:
+            if "could not convert string to float:" in str(e):
+                message =  "Value Error: Invalid data type in data, data should only contain float/int"
+            else:
+                message =  f"Value Error: {e}"
+            error = True
+        except KeyError as e:
+            message =  f"Key Error: {e}"
+            error = True
+        except Exception as e:
+            message =  f"An unexpected error occurred: {e}"
+            error = True
 
     if error:
         return jsonify({
@@ -167,131 +176,48 @@ def trainLinearRegression():
             }
         })
 
-@app.route('/train/naive_bayes', methods=['POST'])
-def trainNaiveBayes():
-    """
-        Summary of API
-
-        Parameters (request):
-        ------------------------------------------
-        data: array of float/int
-            In the form of:
-            [
-                [col1, col2, col3, col4, col5, ...], 
-                [x1_0, x2_0, x3_0, x4_0, x5_0, ...], 
-                [x1_1, x2_1, x3_1, x4_1, x5_1, ...],
-                ...
-            ]
-        targets: array
-            An array of strings representing the target columns. Example: [col6, col7]
-        parameters: dictionary
-            test_size: float (between 0 and 1)
-                The percentage of data used for validation.
-            model_type: string (options: "gaussian", "multinomial", "bernoulli")
-                The type of Naive Bayes model to be used.
-            priors: array, optional (default=None) (shape = target.shape)
-                Prior probabilities of the classes.
-            alpha: float, optional (default=1e-9)
-                Smoothing parameter to ensure stability in calculations.
-
-        Returns (JSON):
-        ------------------------------------------
-        model: string
-            The ID of the model that can predict other unknown values.
-        evaluation: dictionary
-            accuracy: float
-                The accuracy of the model.
-            precision: float
-                The precision of the model.
-    """
-    
-    error = False
-    try:
-        data, targets, parameters = train_preprocessing(request)
-    except ValueError as e:
-        message = f"Value Error {e}"
-        error = True
-    except KeyError as e:
-        message = f"Key Error: {e}"
-        error = True
-    except Exception as e:
-        message =  f"An unexpected error occurred: {e}"
-        error = True
-
-
-    try:
-        model_id, evaluation = train_naive_bayes(data, targets, parameters)
-    except ValueError as e:
-        if "could not convert string to float:" in str(e):
-            message = "Value Error: Invalid data type in data, data should only contain float/int"
-            error = True
-        else:
-            message = f"Value Error: {e}"
-            error = True
-    except KeyError as e:
-        message = f"Key Error: {e}"
-        error = True
-    except Exception as e:
-        message =  f"An unexpected error occurred: {e}"
-        error = True
-
-
-    if error:
-        return jsonify({
-                    "status" : "error",
-                    "message" : message,
-                    "code" : 400
-                })
-
-    return jsonify({
-        "status" : "OK",
-        "message" : "Data retrieved successfully",
-        "code" : 200,
-        "model_id": model_id,
-        "evaluation": {
-            "accuracy": evaluation["accuracy"],
-            "precision" : evaluation["precision"]
-            }
-        })
-
 @app.route('/train/logistics_regression', methods=['POST'])
 def trainLogisticsRegression():
     """
-        Summary of API
-
-        Parameters (request):
-        ------------------------------------------
-        data: array of float/int
-            In the form of:
+    **Train a Logistic Regression model and evaluate its performance.**
+    
+    ## Parameters (request):
+        `data` : List[List[Union[float, int, str]]]
+            Input data structured as:
             [
-                [col1, col2, col3, col4, col5, ...], 
+                [column1, column2, column3, column4, column5, ...], 
                 [x1_0, x2_0, x3_0, x4_0, x5_0, ...], 
                 [x1_1, x2_1, x3_1, x4_1, x5_1, ...],
                 ...
             ]
-        targets: array
-            An array of strings representing the target columns. Example: [col6, col7]
-        parameters: dictionary
-            test_size: float (between 0 and 1)
-                The percentage of data used for validation.
-            penalty: string, optional (default="l2") ("l1", "l2", "elasticnet", "None")
-                The type of regularization penalty.
-            tol: float, optional (default=1e-4)
-                Tolerance for stopping criteria.
-            C: float, optional (default=1.0, must be positive)
-                Inverse of regularization strength. The smaller the number, the stronger the regularization.
-            fit_intercept: bool, optional (default=True)
+
+        `targets` : List[str]
+            List of target column names. Example: [column4, column5]
+
+        `parameters` : dict
+            Dictionary of optional parameters for model training:
+            - `test_size` (float): 
+                Proportion of the dataset to include in the validation split. Must be between 0 and 1.
+            - `penalty` (str, optional, default="l2"): 
+                Type of regularization to apply. Options are 'l1', 'l2', 'elasticnet', or 'None'.
+            - `tol` (float, optional, default=1e-4): 
+                Tolerance for stopping criteria. The algorithm stops when the loss function changes by less than this value.
+            - `C` (float, optional, default=1.0): 
+                Inverse of regularization strength. Must be positive. Smaller values specify stronger regularization.
+            - `fit_intercept` (bool, optional, default=True): 
                 Whether to include an intercept (bias) in the model.
 
-        Returns (JSON):
-        ------------------------------------------
-        model: string
-            The ID of the model that can predict other unknown values.
-        evaluation: dictionary
-            accuracy: float
-                The accuracy of the model.
-            precision: float
-                The precision of the model.
+    ## Returns (JSON):
+        `model` : str
+            Identifier for the trained model, which can be used to make predictions.
+
+        `evaluation` : dict
+            Dictionary with performance metrics of the model:
+
+            - `accuracy` (float): 
+                Accuracy of the model on the validation set.
+            - `precision` (float):
+                Precision of the model on the validation set.
     """
     error = False
     try:
@@ -306,21 +232,22 @@ def trainLogisticsRegression():
         message =  f"An unexpected error occurred: {e}"
         error = True
 
-    try:
-        model_id, evaluation = train_logistic_regression(data, targets, parameters)
-    except ValueError as e:
-        if "could not convert string to float:" in str(e):
-            message =  "Value Error: Invalid data type in data, data should only contain float/int"
+    if error:
+        try:
+            model_id, evaluation = train_logistic_regression(data, targets, parameters)
+        except ValueError as e:
+            if "could not convert string to float:" in str(e):
+                message =  "Value Error: Invalid data type in data, data should only contain float/int"
+                error = True
+            else:
+                message = f"Value Error: {e}"
+                error = True
+        except KeyError as e:
             error = True
-        else:
-            message = f"Value Error: {e}"
+            message = f"Key Error: {e}"
+        except Exception as e:
+            message =  f"An unexpected error occurred: {e}"
             error = True
-    except KeyError as e:
-        error = True
-        message = f"Key Error: {e}"
-    except Exception as e:
-        message =  f"An unexpected error occurred: {e}"
-        error = True
 
     
     if error:
@@ -340,36 +267,137 @@ def trainLogisticsRegression():
             "precision" : evaluation["precision"]
             }
         })
+
+@app.route('/train/naive_bayes', methods=['POST'])
+def trainNaiveBayes():
+    """
+    **Train a Naive Bayes model and evaluate its performance.**
+
+    Description:
+        This function trains a Naive Bayes model using the provided dataset and hyperparameters. 
+        It then evaluates the model's performance and returns the model's ID along with key metrics.
+
+    ## Parameters (request):
+        `data` (List[List[Union[float, int, str]]]): 
+            A list of lists where each inner list represents a row of features with numeric values (floats or integers).
+            Example:
+            [
+                [column1, column2, column3, column4, column5, ...], \n
+                [x1_0, x2_0, x3_0, x4_0, x5_0, ...], \n
+                [x1_1, x2_1, x3_1, x4_1, x5_1, ...], \n
+                ...
+            ]
+            
+
+        `targets` (List[str]): 
+            A list of strings representing the target columns. Example: ['column4', 'column5']
+
+        `parameters` (Dict[str, Union[float, str, List[float], None]]): 
+            A dictionary of hyperparameters for model training, with the following possible keys:
+
+            - `test_size` (float): 
+                The percentage of data to be used for validation. Must be between 0 and 1.
+            - `model_type` (str): 
+                The type of Naive Bayes model to use. Options include "gaussian", "multinomial", or "bernoulli".
+            - `priors` (List[float], optional, default=None): 
+                The prior probabilities of the classes. If not provided, defaults to None, and priors will be estimated from the data.
+            - `alpha` (float, optional, default=1e-9): 
+                A smoothing parameter to ensure stability in calculations.
+
+    ## Returns (JSON):
+        A json file containing:
+        - `model` (str): 
+            The ID of the model that can predict other unknown values.
+
+        - `evaluation` (Dict[str, float]): 
+            A dictionary with performance metrics of the model:
+
+            - `accuracy` (float): 
+                The accuracy of the model on the validation set.
+            - `precision` (float): 
+                The precision of the model on the validation set.
+    """
     
+    error = False
+    try:
+        data, targets, parameters = train_preprocessing(request)
+    except ValueError as e:
+        message = f"Value Error {e}"
+        error = True
+    except KeyError as e:
+        message = f"Key Error: {e}"
+        error = True
+    except Exception as e:
+        message =  f"An unexpected error occurred: {e}"
+        error = True
+
+    if not error:
+        try:
+            model_id, evaluation = train_naive_bayes(data, targets, parameters)
+        except ValueError as e:
+            if "could not convert string to float:" in str(e):
+                message = "Value Error: Invalid data type in data, data should only contain float/int"
+                error = True
+            else:
+                message = f"Value Error: {e}"
+                error = True
+        except KeyError as e:
+            message = f"Key Error: {e}"
+            error = True
+        except Exception as e:
+            message =  f"An unexpected error occurred: {e}"
+            error = True
+
+
+    if error:
+        return jsonify({
+                    "status" : "error",
+                    "message" : message,
+                    "code" : 400
+                })
+
+    return jsonify({
+        "status" : "OK",
+        "message" : "Data retrieved successfully",
+        "code" : 200,
+        "model_id": model_id,
+        "evaluation": {
+            "accuracy": evaluation["accuracy"],
+            "precision" : evaluation["precision"]
+            }
+        })
+
 @app.route('/predict', methods=['POST'])
 def predict():
-    """
-        Summary of API
 
-        Parameters (request):
-        ------------------------------------------
-        data: array of float/int
-            In the form of:
-            [
-                [col1, col2, col3, col4, col5, ...], 
-                [x1_0, x2_0, x3_0, x4_0, x5_0, ...], 
-                [x1_1, x2_1, x3_1, x4_1, x5_1, ...],
-                ...
-            ]
-        model_id: string
-            The ID of the model.
-
-        Returns (JSON):
-        ------------------------------------------
-        prediction: array of int/float
-            In the form of:
-            [
-                [col6, col7, ...], 
-                [x6_0, x7_0, ...], 
-                [x6_1, x7_1, ...],
-                ...
-            ]
     """
+    **Predicts outcomes using a trained model.**
+
+    Parameters (request):
+    ---------------------
+    `data` : List[List[Union[float, int]]]
+        Input data structured as:
+        [
+            [column1, column2, column3, column4, column5, ...], 
+            [x1_0, x2_0, x3_0, x4_0, x5_0, ...], 
+            [x1_1, x2_1, x3_1, x4_1, x5_1, ...],
+            ...
+        ]
+    `model_id` : str
+        Identifier of the trained model used for making predictions.
+
+    Returns (JSON):
+    ----------------
+    List[List[Union[float, int]]]
+        Predicted values in the same format as the input data:
+        [
+            [column6, column7, ...], 
+            [x6_0, x7_0, ...], 
+            [x6_1, x7_1, ...],
+            ...
+        ]
+    """
+
     error = False
 
     try:
@@ -384,18 +412,19 @@ def predict():
         message = f"An unexpected error occurred: {e}"
         error = True
 
-    try:
-        df_prediction = pred(df, model_id)
-    except FileNotFoundError as e:
-        message = f"File Not Found Error: {e}"
-        error = True
-    except ValueError as e:
-        message = f"Value Error: {e}"
-        error = True
-    except KeyError as e:
-        message = f"Key Error: {e}"
-        error = True
-    
+    if error:
+        try:
+            df_prediction = pred(df, model_id)
+        except FileNotFoundError as e:
+            message = f"File Not Found Error: {e}"
+            error = True
+        except ValueError as e:
+            message = f"Value Error: {e}"
+            error = True
+        except KeyError as e:
+            message = f"Key Error: {e}"
+            error = True
+        
     if error:
         return jsonify({
             "status" : "error",
