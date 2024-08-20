@@ -89,5 +89,3 @@ def train(
     
     return model_id, evaluation
 
-
-help(train)
