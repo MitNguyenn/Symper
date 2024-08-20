@@ -69,8 +69,10 @@ def train(data, target_columns, params):
     }
     
     model_id = str(uuid.uuid4())
+    model_id = f"{y.columns.to_list()}`~{model_id}"
+
     if not os.path.exists("save"):
         os.makedirs("save")
-    joblib.dump(model, f"save/{y.columns.to_list()}`~{model_id}.pkl")
+    joblib.dump(model, f"save/{model_id}.pkl")
     
     return model_id, evaluation

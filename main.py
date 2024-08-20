@@ -271,7 +271,7 @@ def trainLogisticsRegression():
             ]
         targets: array
             An array of strings representing the target columns. Example: [col6, col7]
-        params: dictionary
+        parameters: dictionary
             test_size: float (between 0 and 1)
                 The percentage of data used for validation.
             penalty: string, optional (default="l2") ("l1", "l2", "elasticnet", "None")

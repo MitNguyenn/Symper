@@ -53,14 +53,14 @@ def train(data, target_columns, params):
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
-    if type.lower() == "gaussian":
+    if type == "gaussian":
         model = GaussianNB(var_smoothing=alpha, priors=priors)
-    elif type.lower() == "multinomial":
+    elif type == "multinomial":
         for col in y.columns:
             if len(y[col].unique()) != 2:
                 raise ValueError("Targets must only have 2 unique values") 
         model = MultinomialNB(alpha=alpha, class_prior=priors)
-    elif type.lower() == "bernoulli":
+    elif type == "bernoulli":
         model = BernoulliNB(alpha=alpha, class_prior=priors)
     else:
         raise ValueError("Invalid Naive Bayes model type")
@@ -74,10 +74,11 @@ def train(data, target_columns, params):
     evaluation["precision"] = precision_score(model.predict(X_test), y_test)
 
     model_id = str(uuid.uuid4())
+    model_id = f"{y.columns.to_list()}`~{model_id}"
+
     if not os.path.exists("save"):
         os.makedirs("save")
-    joblib.dump(model, f"save/{y.columns.to_list()}`~{model_id}.pkl")
-    
+    joblib.dump(model, f"save/{model_id}.pkl")
 
     return model_id, evaluation
 
