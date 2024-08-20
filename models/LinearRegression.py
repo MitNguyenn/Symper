@@ -38,12 +38,6 @@ def train(
                 Whether to include an intercept in the model.
             - `positive` (bool, optional, default=True): 
                 Whether to constrain the model's coefficients to be positive.
-            - `model_type` (str, optional): 
-                The type of Naive Bayes model to use. Options include 'gaussian', 'multinomial', or 'bernoulli'.
-            - `priors` (List[float], optional): 
-                The prior probabilities of the classes. If not provided, defaults to None, and priors will be estimated from the data.
-            - `alpha` (float, optional, default=1e-9): 
-                A smoothing parameter to handle zero probabilities in calculations.
 
     Returns:
         `model_id` (str): 
