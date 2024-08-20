@@ -1,25 +1,27 @@
-import joblib
 
-def predict(X, model_id):
+
+import joblib
+import pandas as pd
+
+
+def predict(X: pd.DataFrame, model_id: str) -> pd.DataFrame:
     """
-        Summary of function
-    
-        Description:
-        -----------------------
-        Returns predictions based on the provided model and input data.
-    
-        Parameters:
-        ------------------------
-        X: pd.DataFrame
+    **Returns predictions based on the provided model and input data.**
+
+    Description:
+        This function generates predictions using the specified model and the provided input data.
+
+    Parameters:
+        X (pd.DataFrame): 
             A DataFrame containing the input data for prediction.
-        model_id: string
+        model_id (str): 
             The identifier of the model to be used for making predictions.
-    
-        Returns:
-        -------------------------
-        y: pd.DataFrame
+
+    Returns:
+        y (pd.DataFrame): 
             A DataFrame containing the predictions made by the model.
     """
+
     try:
         model = joblib.load(f"save/{model_id}.pkl")
         columns = model_id.split("`~")[0][1:-1]
@@ -31,6 +33,4 @@ def predict(X, model_id):
         return y
     except FileNotFoundError:
         raise FileNotFoundError("No such model ID")
-    except Exception:
-        return("Incorrect model or Invalid model")
 

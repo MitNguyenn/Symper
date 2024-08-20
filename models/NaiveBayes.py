@@ -1,51 +1,62 @@
 import os
+from typing import List, Dict, Tuple
 
 import uuid
 import joblib
+import pandas as pd
 
 from sklearn.naive_bayes import GaussianNB, MultinomialNB, BernoulliNB
 from sklearn.model_selection import train_test_split 
 from sklearn.metrics import accuracy_score, precision_score
 
-def train(data, target_columns, params):
+def train(
+    data: pd.DataFrame,
+    target_columns: List[str],
+    parameters: Dict[str, float | str | List[float] | None]
+) -> Tuple[str, Dict[str, float]]:
     """
-        Summary of the function.
+    **Train a Naive Bayes model and evaluate its performance.**
 
-        Description:
-        -----------------------
-        This function returns a model that users can utilize to predict other data.
-    
-        Parameters:
-        ------------------------
-        data: pd.DataFrame
-            A DataFrame consisting of floats/integers.
-        target_columns: array
-            An array of strings containing the target names.
-        params: dictionary
-            test_size: float (between 0 and 1)
-                The percentage of validation data taken from the data.
-            model_type: string (gaussian/multinomial/bernoulli)
-                The type of Naive Bayes model to be used.
-            priors: array, optional (default=None) (shape = target.shape)
-                Prior probabilities of the classes.
-            alpha: float, optional (default=1e-9)
-                A smoothing parameter to create stability for calculations.
+    Description:
+        This function trains a Naive Bayes model using the provided dataset and hyperparameters. 
+        It then evaluates the model's performance and returns the model's ID along with key metrics.
 
-        Returns:
-        -------------------------
-        model_id: string
-            The ID of the model that can predict other unknown values.
-        evaluation: dictionary
-            accuracy: float
-                The accuracy of the model.
-            precision: float
-                The precision of the model.
+    Parameters:
+        data (pd.DataFrame): 
+            A DataFrame containing features with numeric values (floats or integers).
+
+        target_columns (List[str]): 
+            A list of strings representing the names of the target columns to predict.
+
+        parameters (Dict[float | str | List[float] | None]): 
+            A dictionary of hyperparameters for model training, with the following possible keys:
+            
+            - `test_size` (float): 
+                The proportion of the dataset to reserve for validation. Must be between 0 and 1.
+            - `model_type` (str): 
+                The type of Naive Bayes model to use. Options include 'gaussian', 'multinomial', or 'bernoulli'.
+            - `priors` (List[float], optional): 
+                The prior probabilities of the classes. If not provided, defaults to None, and priors will be estimated from the data.
+            - `alpha` (float, optional, default=1e-9): 
+                A smoothing parameter to handle zero probabilities in calculations.
+
+    Returns:
+        `model_id` (str): 
+            An identifier for the trained model that can be used for making predictions.
+
+        `evaluation` (Dict[str, float]): 
+            A dictionary containing performance metrics of the model:
+            
+            - `accuracy` (float): 
+                The accuracy of the model on the validation set.
+            - `precision` (float): 
+                The precision of the model on the validation set.
     """
     
-    test_size = params.get('test_size', 0.2)
-    type = params.get('type')
-    alpha = params.get('alpha', 1e-9)
-    priors = params.get('priors', None)
+    test_size = parameters.get('test_size', 0.2)
+    type = parameters.get('model_type')
+    alpha = parameters.get('alpha', 1e-9)
+    priors = parameters.get('priors', None)
 
 
     X = data.drop(columns=target_columns)
@@ -53,14 +64,14 @@ def train(data, target_columns, params):
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
-    if type == "gaussian":
+    if type.lower() == "gaussian":
         model = GaussianNB(var_smoothing=alpha, priors=priors)
-    elif type == "multinomial":
+    elif type.lower() == "multinomial":
         for col in y.columns:
             if len(y[col].unique()) != 2:
                 raise ValueError("Targets must only have 2 unique values") 
         model = MultinomialNB(alpha=alpha, class_prior=priors)
-    elif type == "bernoulli":
+    elif type.lower() == "bernoulli":
         model = BernoulliNB(alpha=alpha, class_prior=priors)
     else:
         raise ValueError("Invalid Naive Bayes model type")
@@ -74,11 +85,10 @@ def train(data, target_columns, params):
     evaluation["precision"] = precision_score(model.predict(X_test), y_test)
 
     model_id = str(uuid.uuid4())
-    model_id = f"{y.columns.to_list()}`~{model_id}"
-
     if not os.path.exists("save"):
         os.makedirs("save")
-    joblib.dump(model, f"save/{model_id}.pkl")
+    joblib.dump(model, f"save/{y.columns.to_list()}`~{model_id}.pkl")
+    
 
     return model_id, evaluation
 

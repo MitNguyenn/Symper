@@ -1,4 +1,5 @@
 import os
+from typing import Dict, List, Tuple
 
 import uuid
 import joblib
@@ -9,42 +10,55 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
 
-def train(data, target_columns, params):
+def train(
+    data: pd.DataFrame,
+    target_columns: List[str],
+    parameters: Dict[str, float | bool | str | List[float] | None]
+) -> Tuple[str, Dict[str, float]]:
     """
-        Summary of the function:
-    
-        Description:
-        -----------------------
-        This function returns a model that users can utilize to predict other data.
-    
-        Parameters:
-        ------------------------
-        data: pd.DataFrame
-            A DataFrame consisting of floats/integers.
-        target_columns: array
-            An array of strings containing the target names.
-        params: dictionary
-            test_size: float (between 0 and 1)
-                The percentage of validation data taken from the data.
-            fit_intercept: bool (default: True)
+    **Train a Linear Regression model and evaluate its performance.**
+
+    Description:
+        This function trains a Linear Regression model using the provided dataset and hyperparameters. It then 
+        evaluates the model's performance and returns the model's ID along with key metrics.
+
+    Parameters:
+        data (pd.DataFrame): 
+            A DataFrame containing features with numeric values (floats or integers).
+
+        target_columns (List[str]): 
+            A list of strings representing the names of the target columns to predict.
+
+        parameters (Dict[str, float | bool | str | List[float] | None]): 
+            A dictionary of hyperparameters for model training, with the following possible keys:
+
+            - `test_size` (float): 
+                The proportion of the dataset to reserve for validation. Should be between 0 and 1.
+            - `fit_intercept` (bool, optional, default=True): 
                 Whether to include an intercept in the model.
-            positive: bool (default: True)
+            - `positive` (bool, optional, default=True): 
                 Whether to constrain the model's coefficients to be positive.
-            
-        Returns:
-        -------------------------
-        model: string
-            The ID of a model that can predict other unknown values.
-        evaluation: dictionary
-            MSE: float
-                Mean Squared Error loss of the model. The smaller, the better.
+            - `model_type` (str, optional): 
+                The type of Naive Bayes model to use. Options include 'gaussian', 'multinomial', or 'bernoulli'.
+            - `priors` (List[float], optional): 
+                The prior probabilities of the classes. If not provided, defaults to None, and priors will be estimated from the data.
+            - `alpha` (float, optional, default=1e-9): 
+                A smoothing parameter to handle zero probabilities in calculations.
+
+    Returns:
+        `model_id` (str): 
+            An identifier for the trained model that can be used for making predictions.
+        `evaluation` (Dict[str, float]): 
+            A dictionary containing performance metrics of the model:
+            - `MSE` (float): 
+                The Mean Squared Error of the model on the validation set. A lower value indicates a better model.
     """
 
     X = data.drop(columns=target_columns)
     y = data[target_columns].copy()
-    test_size = params["test_size"]
+    test_size = parameters["test_size"]
 
-    model = LinearRegression(fit_intercept = params.get('fit_intercept', True), positive = params.get('positive', True))
+    model = LinearRegression(fit_intercept = parameters.get('fit_intercept', True), positive = parameters.get('positive', True))
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
