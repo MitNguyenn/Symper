@@ -17,7 +17,7 @@ data = pd.DataFrame({
     "Feature1": [1.2, 2.3, 3.4, 4.5, 5.6],
     "Feature2": [3.4, 4.5, 5.6, 6.7, 7.8],
     "Feature3": [5.6, 6.7, 7.8, 8.9, 9.0],
-    "Feature4": [1, 3, 2, 2, 1]
+    "Feature4": [1, 2, 2, 2, 1]
 })
 
 
@@ -66,7 +66,7 @@ def test_naive_bayes():
                                 ["Feature4"], 
                                 {
                                     "test_size" : 0.4,
-                                    "type" : "bernoulli",
+                                    "model_type" : "multinomial",
                                     "alpha" : 1e-4
                                 })
     except ValueError as e:
@@ -76,6 +76,8 @@ def test_naive_bayes():
             print(f"Value Error: {e}")
     except KeyError as e:
         print(f"Key Error: {e}")
+    except Exception as e:
+        print(e)
 
 class Request:
     def __init__(self, request):
@@ -141,11 +143,11 @@ def test_predict_preprocessing():
         "Feature2": [3.4, 4.5, 5.6, 6.7, 7.8],
     })
 
-    model_id = "['Feature3', 'Feature4']`~c0d86d0a-1fb5-469c-854d-8d9e91915719"
+    model_id = "['Feature3', 'Feature4']`~359fb16b-f84c-4b79-9ee2-d91e6bf44920"
     try:
         pred = predict(data, model_id)
     except FileNotFoundError:
-        print("BRUH")
+        print("FileNotFoundError")
     except ValueError as e:
         print(f"Value Error: {e}")
     except KeyError as e:

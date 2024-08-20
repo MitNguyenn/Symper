@@ -232,7 +232,7 @@ def trainLogisticsRegression():
         message =  f"An unexpected error occurred: {e}"
         error = True
 
-    if error:
+    if not error:
         try:
             model_id, evaluation = train_logistic_regression(data, targets, parameters)
         except ValueError as e:
@@ -412,7 +412,7 @@ def predict():
         message = f"An unexpected error occurred: {e}"
         error = True
 
-    if error:
+    if not error:
         try:
             df_prediction = pred(df, model_id)
         except FileNotFoundError as e:
