@@ -69,24 +69,31 @@ def predict_preprocessing(request):
         model_id: string
             The ID of the model.
 
+        - ID_col (List[str]):
+            An array of strings representing the index columns. Example: ['column1']            
+
+
         Returns:
         ------------------------------------------
         data: pd.DataFrame
             The data converted into a Pandas DataFrame.
         model_id: string
             The ID of the model.
+        ID: List[str]
+            ID columns
     """
 
     input_data = request.get_json()
     try:
         data = input_data['data']
         model_id = input_data['model_id']
+        ID = input_data['ID_column']
     except KeyError:
         raise KeyError("Request is missing parameters")
 
     df = pd.DataFrame(data[1:], columns=data[0])
     df.reset_index(drop=True, inplace=True)
-    return df, model_id
+    return df, model_id, ID
 
 @app.route('/train/linear_regression', methods=['POST'])
 def trainLinearRegression():
@@ -106,11 +113,14 @@ def trainLinearRegression():
                 [x1_1, x2_1, x3_1, x4_1, x5_1, ...],\n
                 ...
             ]
+
         `targets` (List[str]): 
             An array of strings representing the target columns. Example: ['column4', 'column5']
         `parameters` (dictionary): 
             A dictionary of hyperparameters for model training, with the following possible keys:
 
+            - ID (List[str]):
+                An array of strings representing the index columns. Example: ['column1']            
             - `test_size` (float): 
                 The percentage of data to be used for validation. Must be between 0 and 1.
             - `fit_intercept` (bool, optional, default=True): 
@@ -198,6 +208,8 @@ def trainLogisticsRegression():
             Dictionary of optional parameters for model training:
             - `test_size` (float): 
                 Proportion of the dataset to include in the validation split. Must be between 0 and 1.
+            - ID (List[str]):
+                An array of strings representing the index columns. Example: ['column1']            
             - `penalty` (str, optional, default="l2"): 
                 Type of regularization to apply. Options are 'l1', 'l2', 'elasticnet', or 'None'.
             - `tol` (float, optional, default=1e-4): 
@@ -297,6 +309,8 @@ def trainNaiveBayes():
 
             - `test_size` (float): 
                 The percentage of data to be used for validation. Must be between 0 and 1.
+            - ID (List[str]):
+                An array of strings representing the index columns. Example: ['column1']
             - `model_type` (str): 
                 The type of Naive Bayes model to use. Options include "gaussian", "multinomial", or "bernoulli".
             - `priors` (List[float], optional, default=None): 
@@ -386,6 +400,10 @@ def predict():
     `model_id` : str
         Identifier of the trained model used for making predictions.
 
+    - ID_column (List[str]):
+        An array of strings representing the index columns. Example: ['column1']            
+
+
     Returns (JSON):
     ----------------
     List[List[Union[float, int]]]
@@ -401,7 +419,7 @@ def predict():
     error = False
 
     try:
-        df, model_id = predict_preprocessing(request)
+        df, model_id, id_columns = predict_preprocessing(request)
     except ValueError as e:
         message = f"Value Error {e}"
         error = True
@@ -414,7 +432,7 @@ def predict():
 
     if not error:
         try:
-            df_prediction = pred(df, model_id)
+            df_prediction = pred(df, model_id, id_columns)
         except FileNotFoundError as e:
             message = f"File Not Found Error: {e}"
             error = True
