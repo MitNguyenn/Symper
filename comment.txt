@@ -1,5 +1,0 @@
-1. Missing columns: Not really understand
-2. Missing optional parameters: set as default so there is no error
-3. Invalid parameters: Not really understand, like test_size = -1 or having excess parameters for a model(but does not change the final result as it wasn't touched
-but should include warnings)
-4.
