@@ -34,7 +34,7 @@ def predict(X: pd.DataFrame, model_id: str, ID_columns: List[str]) -> pd.DataFra
         y = y.tolist()
         for row,pred in zip(range(len(predictions)), y):
             predictions[row].append(pred)
-        predictions.insert(0, [ID_columns, "predictions"])
+        predictions.insert(0, [i for i in ID_columns] + ["predictions"])
 
         return predictions
     except FileNotFoundError:
