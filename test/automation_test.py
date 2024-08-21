@@ -1,35 +1,45 @@
 import json
+import os
+import sys
 import numpy as np
-from main import app
+import pandas as pd
 import random
-import joblib
+import warnings
+from sklearn.exceptions import DataConversionWarning, ConvergenceWarning
+
+# Ignore specific warnings
+warnings.filterwarnings("ignore", category=DataConversionWarning)
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from main import app
+os.chdir("..")
 
 def test():
     app.config['TESTING'] = True
     client = app.test_client()
 
-    def generate_random_data(rows, cols):
-        data = np.random.uniform(1.0, 10.0, size=(rows, cols)).tolist()
-        columns = [f"col{i+1}" for i in range(cols)]
-        return [columns] + data
-    
-    def get_model_feature_names(model_id):
-        model = joblib.load(f"save/{model_id}.pkl")
-        return model.feature_names_in_
-
+    def read_csv_and_convert(filepath: str):
+        df = pd.read_csv(filepath)
+        data = df.values.tolist()
+        data.insert(0, df.columns.tolist())
+        return data
 
     def test_train_linear_regression():
         try:
-            data = {
-                "data": generate_random_data(100, 5),
-                "target": ["col1"],
+            filepath = os.path.join(os.path.dirname(__file__), '../sample_data/LR_Student_Performance.csv')
+            data = read_csv_and_convert(filepath)
+            json_file = {
+                "data": data,
+                "target": ["Performance Index"],
                 "parameters": {
                     "test_size": 0.2,
                     "fit_intercept": True,
-                    "positive": True
+                    "positive": True,
+                    "ID_columns": []
                 }
             }
-            response = client.post('/train/linear_regression', data=json.dumps(data), content_type='application/json')
+            response = client.post('/train/linear_regression', data=json.dumps(json_file), content_type='application/json')
             response_data = response.json
             print("Linear Regression Test Response:", response_data)
 
@@ -44,18 +54,16 @@ def test():
 
     def test_train_naive_bayes():
         try:
-            data = generate_random_data(100, 4)
-            target = np.random.choice([1, 2], size=100).tolist()
-            for i in range(1, len(data)):
-                data[i][0] = target[i-1]
-
+            filepath = os.path.join(os.path.dirname(__file__), '../sample_data/suv_data.csv')
+            data = read_csv_and_convert(filepath)
             json_file = {
                 "data": data,
-                "target": ["col1"],
+                "target": ["Purchased"],
                 "parameters": {
                     "test_size": 0.2,
-                    "model_type": random.choice(["gaussian", "multinomial", "bernoulli"]),
-                    "alpha": 1e-9
+                    "model_type": "bernoulli",
+                    "alpha": 1e-9,
+                    "ID_columns": ["User ID"]
                 }
             }
             response = client.post('/train/naive_bayes', data=json.dumps(json_file), content_type='application/json')
@@ -71,23 +79,16 @@ def test():
         except Exception as e:
             print(f"An error occurred in Naive Bayes Test: {e}")
 
-
     def test_train_logistics_regression():
         try:
-            data = generate_random_data(100, 5)
-            target = np.random.choice([1, 2], size=100).tolist()
-            for i in range(1, len(data)):
-                data[i][0] = target[i-1]
-
+            filepath = os.path.join(os.path.dirname(__file__), '../sample_data/suv_data.csv')
+            data = read_csv_and_convert(filepath)
             json_file = {
                 "data": data,
-                "target": ["col1"],
+                "target": ["Purchased"],
                 "parameters": {
                     "test_size": 0.2,
-                    "penalty": "l2",
-                    "tol": 1e-4,
-                    "C": 1.0,
-                    "fit_intercept": True
+                    "ID_columns": ["User ID"]
                 }
             }
             response = client.post('/train/logistics_regression', data=json.dumps(json_file), content_type='application/json')
@@ -105,18 +106,20 @@ def test():
 
     def test_predict():
         try:
-            model_id = "['col1']`~505cfc79-d119-435a-b595-6188cc905930"
-            model_features = get_model_feature_names(model_id)
-            data = generate_random_data(100, len(model_features))
-            data[0] = model_features.tolist()
+            csv_file = "suv_data"
+            filepath = os.path.join(os.path.dirname(__file__), f'../sample_data/{csv_file}.csv')
+            data = read_csv_and_convert(filepath)
+
+            data = [row[:-1] for row in data]
             json_file = {
-                "data": data,
-                "model_id": model_id
+                "data": data, 
+                "model_id": "badc4db5-ea6b-4871-9532-3d0bf677807b",
             }
             response = client.post('/predict', data=json.dumps(json_file), content_type='application/json')
             response_data = response.json
-            print("Prediction Test Response:", response_data)
-
+            prediction = response_data["prediction"]
+            for el in prediction:
+                print(el)
             assert response.status_code == 200
             assert response_data['status'] == 'OK'
             assert 'prediction' in response_data
