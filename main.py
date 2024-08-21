@@ -397,10 +397,11 @@ def predict():
             [x1_1, x2_1, x3_1, x4_1, x5_1, ...],
             ...
         ]
+    
     `model_id` : str
         Identifier of the trained model used for making predictions.
 
-    - ID_columns (List[str]):
+    ID_columns (List[str]):
         An array of strings representing the index columns. Example: ['column1']            
 
 
@@ -459,5 +460,5 @@ def predict():
         }), 200
  
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8000)
 

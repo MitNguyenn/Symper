@@ -83,7 +83,6 @@ def train(
     }
     
     model_id = str(uuid.uuid4())
-    model_id = f"{y.columns.to_list()}`~{model_id}"
 
     if not os.path.exists("save"):
         os.makedirs("save")
