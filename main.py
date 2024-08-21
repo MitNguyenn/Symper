@@ -443,7 +443,9 @@ def predict():
         except KeyError as e:
             message = f"Key Error: {e}"
             error = True
-        
+        except Exception as e:
+            message = f"An unexpected error occurred: {e}"
+            error = True
     if error:
         return jsonify({
             "status" : "error",
