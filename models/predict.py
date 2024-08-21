@@ -19,17 +19,21 @@ def predict(X: pd.DataFrame, model_id: str) -> pd.DataFrame:
 
     Returns:
         y (pd.DataFrame): 
-            A DataFrame containing the predictions made by the model.
+            A DataFrame containing the predictions made by the model
+        ID:
+            ID of the target
     """
 
     try:
         model = joblib.load(f"save/{model_id}.pkl")
         columns = model_id.split("`~")[0][1:-1]
         columns = columns.replace("'", "").split(", ")
+        
         y = model.predict(X)
 
         y = y.tolist()
         y.insert(0, columns)
+
         return y
     except FileNotFoundError:
         raise FileNotFoundError("No such model ID")

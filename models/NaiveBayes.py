@@ -51,15 +51,18 @@ def train(
                 The accuracy of the model on the validation set.
             - `precision` (float): 
                 The precision of the model on the validation set.
+            - `ID_columns` (List[str]):
+                An array of strings representing the index columns. Example: ['column1'] 
     """
     
     test_size = parameters.get('test_size', 0.2)
     type = parameters.get('model_type')
     alpha = parameters.get('alpha', 1e-9)
     priors = parameters.get('priors', None)
+    ID_column = parameters['ID_columns']
 
 
-    X = data.drop(columns=target_columns)
+    X = data.drop(columns=target_columns + ID_column)
     y = data[target_columns].copy()
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)

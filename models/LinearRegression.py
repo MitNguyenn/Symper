@@ -38,6 +38,8 @@ def train(
                 Whether to include an intercept in the model.
             - `positive` (bool, optional, default=True): 
                 Whether to constrain the model's coefficients to be positive.
+            - `ID_columns` (List[str]):
+                An array of strings representing the index columns. Example: ['column1'] 
 
     Returns:
         `model_id` (str): 
@@ -47,8 +49,8 @@ def train(
             - `MSE` (float): 
                 The Mean Squared Error of the model on the validation set. A lower value indicates a better model.
     """
-
-    X = data.drop(columns=target_columns)
+    ID_column = parameters["ID_columns"]
+    X = data.drop(columns=target_columns + ID_column)
     y = data[target_columns].copy()
     test_size = parameters["test_size"]
 

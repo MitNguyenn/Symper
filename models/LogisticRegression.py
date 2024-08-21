@@ -42,6 +42,8 @@ def train(
                 The inverse of regularization strength. Must be positive. Smaller values indicate stronger regularization.
             - `fit_intercept` (bool, optional, default=True):
                 Whether to include an intercept in the model.
+            - `ID_columns` (List[str]):
+                An array of strings representing the index columns. Example: ['column1'] 
 
     Returns:
         `model` (str): 
@@ -55,8 +57,8 @@ def train(
             + `precision` (float):
                 The precision of the model on the validation set.
     """
-
-    X = data.drop(columns=target_columns)
+    ID_column = parameters['ID_columns']
+    X = data.drop(columns=target_columns + ID_column)
     y = data[target_columns].copy()
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=parameters['test_size'])

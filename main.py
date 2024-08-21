@@ -400,7 +400,7 @@ def predict():
     `model_id` : str
         Identifier of the trained model used for making predictions.
 
-    - ID_column (List[str]):
+    - ID_columns (List[str]):
         An array of strings representing the index columns. Example: ['column1']            
 
 
