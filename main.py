@@ -69,7 +69,7 @@ def predict_preprocessing(request):
         model_id: string
             The ID of the model.
 
-        - ID_col (List[str]):
+        - ID_columns (List[str]):
             An array of strings representing the index columns. Example: ['column1']            
 
 
@@ -87,7 +87,7 @@ def predict_preprocessing(request):
     try:
         data = input_data['data']
         model_id = input_data['model_id']
-        ID = input_data['ID_column']
+        ID = input_data['ID_columns']
     except KeyError:
         raise KeyError("Request is missing parameters")
 
@@ -119,7 +119,7 @@ def trainLinearRegression():
         `parameters` (dictionary): 
             A dictionary of hyperparameters for model training, with the following possible keys:
 
-            - ID (List[str]):
+            - ID_columns (List[str]):
                 An array of strings representing the index columns. Example: ['column1']            
             - `test_size` (float): 
                 The percentage of data to be used for validation. Must be between 0 and 1.
@@ -174,7 +174,7 @@ def trainLinearRegression():
                     "status" : "error",
                     "message" : message,
                     "code" : 400
-                })
+                }), 400
 
     return jsonify({
         "status" : "OK",
@@ -208,7 +208,7 @@ def trainLogisticsRegression():
             Dictionary of optional parameters for model training:
             - `test_size` (float): 
                 Proportion of the dataset to include in the validation split. Must be between 0 and 1.
-            - ID (List[str]):
+            - ID_columns (List[str]):
                 An array of strings representing the index columns. Example: ['column1']            
             - `penalty` (str, optional, default="l2"): 
                 Type of regularization to apply. Options are 'l1', 'l2', 'elasticnet', or 'None'.
@@ -267,7 +267,7 @@ def trainLogisticsRegression():
                     "status" : "error",
                     "message" : message,
                     "code" : 400
-                })
+                }), 400
 
     return jsonify({
         "status" : "OK",
@@ -309,7 +309,7 @@ def trainNaiveBayes():
 
             - `test_size` (float): 
                 The percentage of data to be used for validation. Must be between 0 and 1.
-            - ID (List[str]):
+            - ID_columns (List[str]):
                 An array of strings representing the index columns. Example: ['column1']
             - `model_type` (str): 
                 The type of Naive Bayes model to use. Options include "gaussian", "multinomial", or "bernoulli".
@@ -368,7 +368,7 @@ def trainNaiveBayes():
                     "status" : "error",
                     "message" : message,
                     "code" : 400
-                })
+                }), 400
 
     return jsonify({
         "status" : "OK",
@@ -400,7 +400,7 @@ def predict():
     `model_id` : str
         Identifier of the trained model used for making predictions.
 
-    - ID_column (List[str]):
+    - ID_columns (List[str]):
         An array of strings representing the index columns. Example: ['column1']            
 
 
@@ -448,7 +448,7 @@ def predict():
             "status" : "error",
             "message" : message,
             "code" : 400,
-            })
+            }), 400
 
 
     return jsonify({
@@ -456,7 +456,7 @@ def predict():
         "message" : "Data retrieved successfully",
         "code" : 200,
         "prediction": df_prediction
-        })
+        }), 200
  
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
