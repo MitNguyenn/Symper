@@ -61,8 +61,11 @@ def train(
     ID_column = parameters['ID_columns']
     X = data.drop(columns=target_columns + ID_column)
     y = data[target_columns].copy()
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=parameters['test_size'])
+    test_size = parameters['test_size']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size)
+    
+    if not test_size:
+        raise ValueError("Missing test size")
 
     model = LogisticRegression(
         penalty=parameters.get('penalty', 'l2'),
@@ -76,11 +79,9 @@ def train(
     y_pred = model.predict(X_test)
     
     accuracy = accuracy_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred)
     
     evaluation = {
         'accuracy': accuracy,
-        'precision': precision
     }
     
     model_id = str(uuid.uuid4())

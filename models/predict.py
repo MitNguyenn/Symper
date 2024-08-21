@@ -26,7 +26,6 @@ def predict(X: pd.DataFrame, model_id: str) -> pd.DataFrame:
     try:
         with open("models/models.csv", "r", newline='') as file:
             reader = csv.DictReader(file)
-            #:)
             for row in reader:
                 if row['model_id'] == model_id:
                     ID_columns = row["ID_columns"].split(",")

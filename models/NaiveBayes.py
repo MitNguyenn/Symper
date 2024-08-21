@@ -56,7 +56,7 @@ def train(
                 An array of strings representing the index columns. Example: ['column1'] 
     """
     
-    test_size = parameters.get('test_size', 0.2)
+    test_size = parameters.get('test_size')
     type = parameters.get('model_type')
     alpha = parameters.get('alpha', 1e-9)
     priors = parameters.get('priors', None)
@@ -65,7 +65,10 @@ def train(
 
     X = data.drop(columns=target_columns + ID_column)
     y = data[target_columns].copy()
-
+    if not test_size:
+        raise ValueError("Missing test size")
+    if not type:
+        raise ValueError("Missing model type")
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
     if type.lower() == "gaussian":
@@ -86,7 +89,7 @@ def train(
     evaluation = {}
 
     evaluation["accuracy"] = accuracy_score(model.predict(X_test), y_test)
-    evaluation["precision"] = precision_score(model.predict(X_test), y_test)
+    # evaluation["precision"] = precision_score(model.predict(X_test), y_test)
 
     model_id = str(uuid.uuid4())
 

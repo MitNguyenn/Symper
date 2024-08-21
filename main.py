@@ -272,7 +272,6 @@ def trainLogisticsRegression():
         "model_id": model_id,
         "evaluation": {
             "accuracy": evaluation["accuracy"],
-            "precision" : evaluation["precision"]
             }
         })
 
@@ -373,7 +372,7 @@ def trainNaiveBayes():
         "model_id": model_id,
         "evaluation": {
             "accuracy": evaluation["accuracy"],
-            "precision" : evaluation["precision"]
+            # "precision" : evaluation["precision"]
             }
         })
 
@@ -429,15 +428,15 @@ def predict():
         except FileNotFoundError as e:
             message = f"File Not Found Error: {e}"
             error = True
-        # except ValueError as e:
-        #     message = f"Value Error: {e}"
-        #     error = True
-        # except KeyError as e:
-        #     message = f"Key Error: {e}"
-        #     error = True
-        # except Exception as e:
-        #     message = f"An unexpected error occurred: {e}"
-        #     error = True
+        except ValueError as e:
+            message = f"Value Error: {e}"
+            error = True
+        except KeyError as e:
+            message = f"Key Error: {e}"
+            error = True
+        except Exception as e:
+            message = f"An unexpected error occurred: {e}"
+            error = True
     if error:
         return jsonify({
             "status" : "error",

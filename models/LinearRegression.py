@@ -54,6 +54,9 @@ def train(
     X = data.drop(columns=target_columns + ID_column)
     y = data[target_columns].copy()
     test_size = parameters["test_size"]
+    print(test_size)
+    if not test_size:
+        raise ValueError("Missing test size")
 
     model = LinearRegression(fit_intercept = parameters.get('fit_intercept', True), positive = parameters.get('positive', True))
 

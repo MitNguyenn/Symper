@@ -1,1 +1,22 @@
 model_id,ID_columns,target_columns
+f27bdc17-bd88-4bfa-907b-889921c0c80c,User ID,Purchased
+56621755-d495-476a-aa37-a2fb0aa76b1b,User ID,Purchased
+20440aa2-f8a5-4db9-b606-9fe9b86a56b8,User ID,"Purchased,EstimatedSalary"
+d286e803-3b61-4943-aff8-351ada0fc4a1,User ID,"Purchased,EstimatedSalary"
+41c2bd80-8ab4-4a39-89e9-ce406e462eb2,User ID,"Purchased,EstimatedSalary"
+e49ec82b-fdb1-4365-8630-e6f63494c138,ID,species
+fcae39b0-683d-4de9-a0e3-04aab9096fd2,User ID,Purchased
+95f3bf2b-a4b1-46ad-92f4-83cc37753d09,User ID,Purchased
+efab5231-c360-437a-98bb-50bf5d91c3d2,User ID,Purchased
+506d090e-d4f4-41d3-afe4-5a854de42ee7,ID,Performance Index
+43ccf34f-a84a-4cd3-bb48-17077d1f5fef,User ID,Purchased
+4b500474-df7a-49bd-91e9-8a9a3dfe2974,User ID,Purchased
+bd116f44-e581-4d48-bc49-a3aa586446dc,User ID,Purchased
+b7d4aa28-5dea-4419-9b2e-3d2457fe2798,User ID,Purchased
+8a516423-4690-4266-a5da-7f9c1896b2d3,User ID,Purchased
+7cb23971-8753-4fff-9d4d-aa384c74f069,User ID,Purchased
+4fb628be-1805-4392-9300-e273964be309,User ID,Purchased
+2748a397-e30b-4fee-99b4-e9d745ea22b6,User ID,Purchased
+8f71f2c0-933c-4692-aad1-a97fc3cc26bf,User ID,Purchased
+5a5edb11-53d4-46b5-9615-c8c0cccf5ed8,User ID,User ID
+48e4922d-ec9e-4cea-8da9-f38b14ad8196,User ID,User ID
