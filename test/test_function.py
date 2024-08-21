@@ -25,8 +25,9 @@ def test_linear_regression():
     print("TEST LINEAR REGRESSION\n")
     try:
         model_id, evaluation = train_linear_regression(data,
-                                ["Feature3", "Feature4"], 
+                                ["Feature4"], 
                                 {
+                                    "ID_columns" : ["Feature1", "Feature2"],
                                     "test_size" : 0.4,
                                     "fit_intercept" : True,
                                     "positive" : False
@@ -155,8 +156,9 @@ def test_predict_preprocessing():
     except Exception as e:
         print(f"Unexpected Error: {e}")
 
-test_linear_regression()
-test_train_preprocessing()
-test_predict_preprocessing()
-test_logistic_regression()
-test_naive_bayes()
+
+# test_linear_regression()
+# test_train_preprocessing()
+# test_predict_preprocessing()
+# test_logistic_regression()
+# test_naive_bayes()
