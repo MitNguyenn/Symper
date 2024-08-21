@@ -429,15 +429,15 @@ def predict():
         except FileNotFoundError as e:
             message = f"File Not Found Error: {e}"
             error = True
-        except ValueError as e:
-            message = f"Value Error: {e}"
-            error = True
-        except KeyError as e:
-            message = f"Key Error: {e}"
-            error = True
-        except Exception as e:
-            message = f"An unexpected error occurred: {e}"
-            error = True
+        # except ValueError as e:
+        #     message = f"Value Error: {e}"
+        #     error = True
+        # except KeyError as e:
+        #     message = f"Key Error: {e}"
+        #     error = True
+        # except Exception as e:
+        #     message = f"An unexpected error occurred: {e}"
+        #     error = True
     if error:
         return jsonify({
             "status" : "error",
@@ -454,5 +454,5 @@ def predict():
         }), 200
  
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8000)
 

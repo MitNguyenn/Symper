@@ -26,8 +26,7 @@ def predict(X: pd.DataFrame, model_id: str) -> pd.DataFrame:
     try:
         with open("models/models.csv", "r", newline='') as file:
             reader = csv.DictReader(file)
-            
-            # Iterate through each row
+            #:)
             for row in reader:
                 if row['model_id'] == model_id:
                     ID_columns = row["ID_columns"].split(",")
@@ -37,12 +36,19 @@ def predict(X: pd.DataFrame, model_id: str) -> pd.DataFrame:
         model = joblib.load(f"save/{model_id}.pkl")
         predictions = X[ID_columns].values.tolist()
         X.drop(columns=ID_columns, inplace=True)
-
+        
         y = model.predict(X)
 
         y = y.tolist()
+        multiple = False
+
+        if type(y[0]) == list:
+            multiple = True
         for row,pred in zip(range(len(predictions)), y):
-            predictions[row] += pred
+            if not multiple:
+                predictions[row].append(pred)
+            else:
+                predictions[row] += pred
         predictions.insert(0, [i for i in ID_columns] + [i for i in target_columns])
 
         return predictions
