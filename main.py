@@ -69,9 +69,6 @@ def predict_preprocessing(request):
         model_id: string
             The ID of the model.
 
-        - ID_columns (List[str]):
-            An array of strings representing the index columns. Example: ['column1']            
-
 
         Returns:
         ------------------------------------------
@@ -87,13 +84,12 @@ def predict_preprocessing(request):
     try:
         data = input_data['data']
         model_id = input_data['model_id']
-        ID = input_data['ID_columns']
     except KeyError:
         raise KeyError("Request is missing parameters")
 
     df = pd.DataFrame(data[1:], columns=data[0])
     df.reset_index(drop=True, inplace=True)
-    return df, model_id, ID
+    return df, model_id
 
 @app.route('/train/linear_regression', methods=['POST'])
 def trainLinearRegression():
@@ -397,12 +393,8 @@ def predict():
             [x1_1, x2_1, x3_1, x4_1, x5_1, ...],
             ...
         ]
-    
     `model_id` : str
         Identifier of the trained model used for making predictions.
-
-    ID_columns (List[str]):
-        An array of strings representing the index columns. Example: ['column1']            
 
 
     Returns (JSON):
@@ -420,7 +412,7 @@ def predict():
     error = False
 
     try:
-        df, model_id, id_columns = predict_preprocessing(request)
+        df, model_id = predict_preprocessing(request)
     except ValueError as e:
         message = f"Value Error {e}"
         error = True
@@ -433,7 +425,7 @@ def predict():
 
     if not error:
         try:
-            df_prediction = pred(df, model_id, id_columns)
+            df_prediction = pred(df, model_id)
         except FileNotFoundError as e:
             message = f"File Not Found Error: {e}"
             error = True
@@ -462,5 +454,5 @@ def predict():
         }), 200
  
 if __name__ == '__main__':
-    app.run(debug=True, port=8000)
+    app.run(debug=True, port=5000)
 

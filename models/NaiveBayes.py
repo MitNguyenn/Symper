@@ -1,5 +1,6 @@
 import os
 from typing import List, Dict, Tuple
+import csv
 
 import uuid
 import joblib
@@ -88,6 +89,14 @@ def train(
     evaluation["precision"] = precision_score(model.predict(X_test), y_test)
 
     model_id = str(uuid.uuid4())
+
+    new_row = [model_id, ",".join(ID_column), ",".join(target_columns)]
+
+    with open("models/models.csv", "a", newline="") as file:
+        writer = csv.writer(file)
+
+        writer.writerow(new_row)
+
     if not os.path.exists("save"):
         os.makedirs("save")
     joblib.dump(model, f"save/{model_id}.pkl")

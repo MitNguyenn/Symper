@@ -1,4 +1,5 @@
 import os
+import csv
 from typing import List, Dict, Tuple, Optional, Union
 
 
@@ -83,6 +84,14 @@ def train(
     }
     
     model_id = str(uuid.uuid4())
+
+    new_row = [model_id, ",".join(ID_column), ",".join(target_columns)]
+
+    with open("models/models.csv", "a", newline="") as file:
+        writer = csv.writer(file)
+
+        writer.writerow(new_row)
+
 
     if not os.path.exists("save"):
         os.makedirs("save")
