@@ -34,7 +34,7 @@ def predict(X: pd.DataFrame, model_id: str) -> pd.DataFrame:
 
         model = joblib.load(f"save/{model_id}.pkl")
         predictions = X[ID_columns].values.tolist()
-        X.drop(columns=ID_columns, inplace=True)
+        X.drop(columns=ID_columns+target_columns, inplace=True)
         
         y = model.predict(X)
 

@@ -251,11 +251,13 @@ def test_predict(client, filepath, json_file):
         print()
         # inputfile = json.loads(json_file)
         # print(type(filepath))
-        # print("File: ", filepath.split('\\')[-1], end="\n\n")
+        print("File: ", filepath.split('\\')[-1], end="\n\n")
         print(f"Data Preview: ", end="\n")
         for i in json_file["data"][:10]:
             print(i)
         print()
+
+        real_data = json_file["data"]
 
         print(f"Model ID: {json_file['model_id']}", end="\n\n")
         print("--------------------------------------")
@@ -267,15 +269,17 @@ def test_predict(client, filepath, json_file):
         print("Prediction API Test Response:", response_data)
         if response_data["code"] == 200:
             prediction = response_data["prediction"]
-            for el in prediction:
-                print(el)
+            print("\nPrediction Preview")
+            for el in range(len(prediction[:10])):
+                print(prediction[el])
+                print(real_data[el])
         assert response.status_code == 200
         assert response_data['status'] == 'OK'
         assert 'prediction' in response_data
     except AssertionError as e:
         print(f"Prediction Test Failed: {e}")
-    except Exception as e:
-        print(f"An error occurred in Prediction Test: {e}")
+    # except Exception as e:
+    #     print(f"An error occurred in Prediction Test: {e}")
 
 
 def test():
@@ -365,8 +369,17 @@ def test():
             elif model == "naive_bayes":
                 test_train_naive_bayes(client, filepath, final_data)
 
+            
+            model_id = input("Model ID: ")
+            filepath = "sample_data/" + input("Data file name: ")+".csv"
+            data = read_csv_and_convert(filepath)
 
+            final_data = {
+                "model_id" : model_id,
+                "data" : data
+            }
 
+            test_predict(client, filepath, final_data)
 
 if __name__ == '__main__':
     test()

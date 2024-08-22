@@ -43,7 +43,7 @@ def train_preprocessing(request):
     input_data = request.get_json()
     try:
         data = input_data['data']
-        target = input_data['target']
+        target = input_data['targets']
         parameters = input_data['parameters']
     except KeyError:
         raise KeyError("Request is missing parameters")
@@ -153,10 +153,7 @@ def trainLinearRegression():
         try:
             model_id, evaluation = train_linear_regression(data, targets, parameters)
         except ValueError as e:
-            if "could not convert string to float:" in str(e):
-                message =  "Value Error: Invalid data type in data, data should only contain float/int"
-            else:
-                message =  f"Value Error: {e}"
+            message =  f"Value Error: {e}"
             error = True
         except KeyError as e:
             message =  f"Key Error: {e}"
@@ -244,12 +241,8 @@ def trainLogisticsRegression():
         try:
             model_id, evaluation = train_logistic_regression(data, targets, parameters)
         except ValueError as e:
-            if "could not convert string to float:" in str(e):
-                message =  "Value Error: Invalid data type in data, data should only contain float/int"
-                error = True
-            else:
-                message = f"Value Error: {e}"
-                error = True
+            message = f"Value Error: {e}"
+            error = True
         except KeyError as e:
             error = True
             message = f"Key Error: {e}"
@@ -344,12 +337,8 @@ def trainNaiveBayes():
         try:
             model_id, evaluation = train_naive_bayes(data, targets, parameters)
         except ValueError as e:
-            if "could not convert string to float:" in str(e):
-                message = "Value Error: Invalid data type in data, data should only contain float/int"
-                error = True
-            else:
-                message = f"Value Error: {e}"
-                error = True
+            message = f"Value Error: {e}"
+            error = True
         except KeyError as e:
             message = f"Key Error: {e}"
             error = True
@@ -437,6 +426,7 @@ def predict():
         except Exception as e:
             message = f"An unexpected error occurred: {e}"
             error = True
+            
     if error:
         return jsonify({
             "status" : "error",
