@@ -60,7 +60,7 @@ def generate_random_parameters(model_type, include_missing_params=False):
         parameters["ID_columns"] = random.choice([[], ["User ID"], ["User ID", "Gender"]])
     return parameters
 
-def generate_random_json(data, target, model_type="logistic_regression", include_missing_params=False):
+def generate_random_json(data, target, model_type, include_missing_params=False):
     parameters = generate_random_parameters(model_type=model_type, include_missing_params=include_missing_params)
     
     json_file = {
