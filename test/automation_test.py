@@ -6,6 +6,7 @@ import pandas as pd
 import random
 import warnings
 from sklearn.exceptions import DataConversionWarning, ConvergenceWarning
+import csv
 
 # Ignore specific warnings
 warnings.filterwarnings("ignore", category=DataConversionWarning)
@@ -14,6 +15,13 @@ warnings.filterwarnings("ignore", category=ConvergenceWarning)
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from main import app
 os.chdir("..")
+
+
+def read_csv_and_convert(filepath: str):
+    df = pd.read_csv(filepath)
+    data = df.values.tolist()
+    data.insert(0, df.columns.tolist())
+    return data
 
 def generate_random_parameters(model_type, include_missing_params=False):
     parameters = {}
@@ -58,29 +66,58 @@ def generate_random_parameters(model_type, include_missing_params=False):
     
     if not include_missing_params or random.choice([True, False]):
         parameters["ID_columns"] = random.choice([[], ["User ID"], ["User ID", "Gender"]])
+    
     return parameters
 
-def generate_random_json(data, target, model_type, include_missing_params=False):
+def get_random_data():
+    csv_string = random.choice(["LR_Student_Performance", "suv_data", "winequality-red", "winequality-white", "error-causing"])
+    filepath = os.path.join(os.path.dirname(__file__), f'../sample_data/{csv_string}.csv')
+    return filepath
+
+def get_columns(filepath):
+    with open(filepath, mode='r') as file:
+        reader = csv.reader(file)
+        columns = next(reader)  # Get the first row (column headers)
+    return columns
+
+def get_random_model_id():
+    filepath = os.path.join(os.path.dirname(__file__), f'../models/models.csv')
+    data = []
+    with open(filepath, mode='r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            data.append(row["model_id"])
+    model_id = random.choice(data)
+    return model_id
+
+def generate_random_training_json(model_type, include_missing_params=False):
     parameters = generate_random_parameters(model_type=model_type, include_missing_params=include_missing_params)
-    
-    json_file = {
+    filepath = get_random_data()
+    data = read_csv_and_convert(filepath)
+    columns = get_columns(filepath)
+    target = random.choice(columns)
+    input = {
         "data": data,
         "target": target,
         "parameters": parameters
     }
-    
+    json_file = json.dumps(input, indent=4)
     return json_file
 
+def generate_random_predict_json(model_type, include_missing_params=False):
+    filepath = get_random_data()
+    data = read_csv_and_convert(filepath)
+    model_id = get_random_model_id() 
+    input = {
+        "data": data,
+        "model_id": model_id
+    }
+    json_file = json.dumps(input, indent=4)
+    return json_file   
 
 def test():
     app.config['TESTING'] = True
     client = app.test_client()
-
-    def read_csv_and_convert(filepath: str):
-        df = pd.read_csv(filepath)
-        data = df.values.tolist()
-        data.insert(0, df.columns.tolist())
-        return data
 
     def test_train_linear_regression():
         try:
