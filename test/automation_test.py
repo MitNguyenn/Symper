@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from main import app
 os.chdir("..")
 
+<<<<<<< HEAD
 def read_csv_and_convert(filepath: str):
     df = pd.read_csv(filepath)
     data = df.values.tolist()
@@ -132,6 +133,63 @@ def test_predict(client, json_file):
     except Exception as e:
         print(f"An error occurred in Prediction Test: {e}")
 
+=======
+def generate_random_parameters(model_type, include_missing_params=False):
+    parameters = {}
+    if model_type == "logistic_regression":
+        if not include_missing_params or random.choice([True, False]):
+            parameters["test_size"] = random.choice([0.1, 0.2, 0.3, 0.4])
+        
+        if not include_missing_params or random.choice([True, False]):
+            parameters["penalty"] = random.choice(["l1", "l2", "elasticnet", "none"])
+        
+        if not include_missing_params or random.choice([True, False]):
+            parameters["tol"] = random.uniform(1e-4, 1e-2)
+        
+        if not include_missing_params or random.choice([True, False]):
+            parameters["C"] = random.uniform(0.1, 10.0)
+        
+        if not include_missing_params or random.choice([True, False]):
+            parameters["fit_intercept"] = random.choice([True, False])
+        
+        if not include_missing_params or random.choice([True, False]):
+            parameters["max_iter"] = random.randint(100, 1000)
+    
+    elif model_type == "naive_bayes":
+        if not include_missing_params or random.choice([True, False]):
+            parameters["test_size"] = random.choice([0.1, 0.2, 0.3, 0.4])
+        
+        if not include_missing_params or random.choice([True, False]):
+            parameters["model_type"] = random.choice(["gaussian", "multinomial", "bernoulli"])
+        
+        if not include_missing_params or random.choice([True, False]):
+            parameters["alpha"] = random.uniform(1e-9, 1.0)
+    
+    elif model_type == "linear_regression":
+        if not include_missing_params or random.choice([True, False]):
+            parameters["test_size"] = random.choice([0.1, 0.2, 0.3, 0.4])
+        
+        if not include_missing_params or random.choice([True, False]):
+            parameters["fit_intercept"] = random.choice([True, False])
+        
+        if not include_missing_params or random.choice([True, False]):
+            parameters["positive"] = random.choice([True, False])
+    
+    if not include_missing_params or random.choice([True, False]):
+        parameters["ID_columns"] = random.choice([[], ["User ID"], ["User ID", "Gender"]])
+    return parameters
+
+def generate_random_json(data, target, model_type, include_missing_params=False):
+    parameters = generate_random_parameters(model_type=model_type, include_missing_params=include_missing_params)
+    
+    json_file = {
+        "data": data,
+        "target": target,
+        "parameters": parameters
+    }
+    
+    return json_file
+>>>>>>> 28ee43a6b039e983d491338f2cc8a9b966907a6e
 
 
 def test():
