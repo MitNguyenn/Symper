@@ -115,7 +115,7 @@ def trainLinearRegression():
         `parameters` (dictionary): 
             A dictionary of hyperparameters for model training, with the following possible keys:
 
-            - ID_columns (List[str]):
+            - `ID_columns` (List[str]):
                 An array of strings representing the index columns. Example: ['column1']            
             - `test_size` (float): 
                 The percentage of data to be used for validation. Must be between 0 and 1.
@@ -204,7 +204,7 @@ def trainLogisticsRegression():
             Dictionary of optional parameters for model training:
             - `test_size` (float): 
                 Proportion of the dataset to include in the validation split. Must be between 0 and 1.
-            - ID_columns (List[str]):
+            - `ID_columns` (List[str]):
                 An array of strings representing the index columns. Example: ['column1']            
             - `penalty` (str, optional, default="l2"): 
                 Type of regularization to apply. Options are 'l1', 'l2', 'elasticnet', or 'None'.
@@ -304,7 +304,7 @@ def trainNaiveBayes():
 
             - `test_size` (float): 
                 The percentage of data to be used for validation. Must be between 0 and 1.
-            - ID_columns (List[str]):
+            - `ID_columns` (List[str]):
                 An array of strings representing the index columns. Example: ['column1']
             - `model_type` (str): 
                 The type of Naive Bayes model to use. Options include "gaussian", "multinomial", or "bernoulli".
