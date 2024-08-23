@@ -18,9 +18,12 @@ os.chdir("..")
 
 
 def read_csv_and_convert(filepath: str):
-    df = pd.read_csv("test/"+filepath)
+    # print(os.listdir(), os.getcwd())
+    df = pd.read_csv(filepath)
     data = df.values.tolist()
     data.insert(0, df.columns.tolist())
+
+    # print(data)
     return data
 
 def generate_random_parameters(model_type, include_missing_params=False):
@@ -64,7 +67,7 @@ def generate_random_parameters(model_type, include_missing_params=False):
 def get_random_data():
     csv_string = random.choice(os.listdir("sample_data"))
     # csv_string = "LR_Student_Performance.csv"
-    filepath = os.path.join(os.path.dirname(__file__), f'sample_data/{csv_string}')
+    filepath = f'sample_data/{csv_string}'
     return filepath
 
 def get_columns(filepath):
@@ -134,8 +137,6 @@ def test_train_linear_regression(client, filepath, json_file):
         print("--------------------------------------")
         print("Results")
 
-        # filepath = os.path.join(os.path.dirname(__file__), 'sample_data/LR_Student_Performance.csv')
-        # data = read_csv_and_convert(filepath)
 
         response = client.post('/train/linear_regression', data=json.dumps(json_file), content_type='application/json')
         response_data = response.json
@@ -170,18 +171,6 @@ def test_train_naive_bayes(client, filepath, json_file):
         print("Results")
 
 
-        # filepath = os.path.join(os.path.dirname(__file__), 'sample_data/suv_data.csv')
-        # data = read_csv_and_convert(filepath)
-        # json_file = {
-        #     "data": data,
-        #     "target": ["Purchased"],
-        #     "parameters": {
-        #         "test_size": 0.2,
-        #         "model_type": "bernoulli",
-        #         "alpha": 1e-9,
-        #         "ID_columns": ["User ID"]
-        #     }
-        # }
         response = client.post('/train/naive_bayes', data=json.dumps(json_file), content_type='application/json')
         response_data = response.json
         print("Naive Bayes Test Response:", response_data)
@@ -215,16 +204,6 @@ def test_train_logistics_regression(client, filepath, json_file):
         print("Results")
 
         
-        # filepath = os.path.join(os.path.dirname(__file__), 'sample_data/suv_data.csv')
-        # data = read_csv_and_convert(filepath)
-        # json_file = {
-        #     "data": data,
-        #     "target": ["Purchased"],
-        #     "parameters": {
-        #         "test_size": 0.2,
-        #         "ID_columns": ["User ID"]
-        #     }
-        # }
         response = client.post('/train/logistics_regression', data=json.dumps(json_file), content_type='application/json')
         response_data = response.json
         print("Logistic Regression Test Response:", response_data)
@@ -343,16 +322,14 @@ def test():
                     else:
                         dtype = input("Input data type: ")
                         value = input("Input value: ")
-                        try:
-                            if dtype in ["int"]:
-                                parameters[name] = int(value)
-                            elif dtype in ["float"]:
-                                parameters[name] = float(value)
-                            elif dtype in ["bool"]:
-                                parameters[name] = bool(value)     
-                        except TypeError:
-                            print("Type Error, automatic convert to string")
-                            parameters[name] = value               
+                        if dtype in ["int"]:
+                            parameters[name] = int(value)
+                        elif dtype in ["float"]:
+                            parameters[name] = float(value)
+                        elif dtype in ["bool"]:
+                            parameters[name] = bool(value)     
+                        elif dtype in ["string"]:
+                            parameters[name] = str(value)
                 else:
                     break
 
@@ -361,6 +338,8 @@ def test():
                 "targets" : targets,
                 "parameters" : parameters
             }
+
+            print(final_data["parameters"])
 
             if model == "linear_regression":
                 test_train_linear_regression(client, filepath, final_data)
