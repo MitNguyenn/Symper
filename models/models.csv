@@ -1,2 +1,6 @@
 model_id,ID_columns,target_columns
 0945c58a-50da-4080-8e76-3c3d3ea3982d,User ID,Purchased
+491cb178-9fc4-40b3-b755-6339ce906471,User ID,Purchased
+403be330-202e-4c80-b33b-bec7c0be9066,ID,Performance Index
+ca1504c0-f7c4-4326-ae94-a747aab287a4,ID,Performance Index
+64186c8d-5c07-4513-9705-d2d67889a3f7,User ID,Purchased

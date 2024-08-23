@@ -245,8 +245,9 @@ def test_predict(client, filepath, json_file):
 
         response = client.post('/predict', data=json.dumps(json_file), content_type='application/json')
         response_data = response.json
-        print("Prediction API Test Response:", response_data)
-        if response_data["code"] == 200:
+        if response_data["code"] != 200:
+            print("Prediction API Test Response:", response_data)
+        elif response_data["code"] == 200:
             prediction = response_data["prediction"]
             print("\nPrediction Preview")
             for el in range(len(prediction[:10])):
