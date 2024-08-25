@@ -221,8 +221,6 @@ def trainLogisticsRegression():
 
             - `accuracy` (float): 
                 Accuracy of the model on the validation set.
-            - `precision` (float):
-                Precision of the model on the validation set.
     """
     error = False
     try:
@@ -316,8 +314,6 @@ def trainNaiveBayes():
 
             - `accuracy` (float): 
                 The accuracy of the model on the validation set.
-            - `precision` (float): 
-                The precision of the model on the validation set.
     """
     
     error = False

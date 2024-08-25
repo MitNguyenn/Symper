@@ -70,7 +70,8 @@ def train(
     if not type:
         raise ValueError("Missing model type")
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
-
+    if type not in ["gaussian", "multinomial", "bernoulli"]:
+        raise ValueError("Invalid model type, should be in ('gaussian', 'multinomial', 'bernoulli')")
     if type.lower() == "gaussian":
         model = GaussianNB(var_smoothing=alpha, priors=priors)
     elif type.lower() == "multinomial":
